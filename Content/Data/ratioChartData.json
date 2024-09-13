@@ -1,0 +1,32 @@
+{
+  "chartTitle": "Market Share by Company",
+  "chartType" :  "pie",
+  "data": [
+    {
+      "label": "Company A",
+      "value": 30,
+      "color": "#FF5733"
+    },
+    {
+      "label": "Company B",
+      "value": 25,
+      "color": "#33FF57"
+    },
+    {
+      "label": "Company C",
+      "value": 20,
+      "color": "#3357FF"
+    },
+    {
+      "label": "Company D",
+      "value": 15,
+      "color": "#F0FF33"
+    },
+    {
+      "label": "Company E",
+      "value": 10,
+      "color": "#FF33A1"
+    }
+  ],
+  "total": 100
+}

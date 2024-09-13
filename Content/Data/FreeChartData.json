@@ -1,0 +1,15 @@
+{
+  "chartTitle": "Free Type Json",
+  "chartType": "free",
+  "name": "nero",
+  "age": 2,
+  "color": "black",
+  "like_food": [ "banana", "apple", "chewrrr" ],
+  "is_cat": "True",
+  "is_dog": "False",
+  "friends": {
+    "poki": "cat",
+    "bowow": "dog",
+    "yatong": "cat"
+  }
+}

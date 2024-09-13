@@ -26,5 +26,6 @@ TSharedPtr<FJsonObject> UJsonHandler::GetJsonObjectData(const FString& FilePath)
     else
     {
         UE_LOG(LogTemp, Error, TEXT("JSONHandler : Failed to Read JSON Data"));
+        return nullptr;
     }
 }

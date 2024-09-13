@@ -17,26 +17,24 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintCallable, Category = "Graph")
-	virtual void ConstructGraph();
+	UFUNCTION(BlueprintCallable, Category = "Chart")
+	void GenerateBarChart();
+
+	UFUNCTION(BlueprintCallable, Category = "Data")
+	void GetDataFromDataManager();
+
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	// Data Getter Function
-	UPROPERTY(BlueprintReadWrite, Category = "Data")
-	TMap<FString, FString> ParsedJSONData;
+
 
 private:
-	
 	// Referenced DataManager
 	UPROPERTY()
-	UDataManager* DataManager;
+	UDataManager* DataManagerPtr;
 	UFUNCTION()
 	void InitilizeDataManager();
 
-	// Get Data From DataManager
-	UFUNCTION()
-	void CacheJSONDatas();
 };

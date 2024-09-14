@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "DataManageGameInstance.h"
+#include "BarBaseActor.h"
 #include "Data3DActor.generated.h"
 
 UCLASS(Blueprintable)
@@ -14,14 +15,27 @@ class TEST_API AData3DActor : public AActor
 	
 
 public:	
+	AData3DActor();
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintCallable, Category = "Chart")
-	void GenerateBarChart();
-
 	UFUNCTION(BlueprintCallable, Category = "Data")
 	void GetDataFromDataManager();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	UStaticMeshComponent* BaseMesh;
+
+	// ABarBaseActor BP¼­ ÂüÁ¶
+	UPROPERTY(EditAnywhere, Category = "BarGraph")
+	TSubclassOf<ABarBaseActor> BarBase;
+
+
+	UFUNCTION(BlueprintCallable, Category = "Chart")
+	void GenerateShapeChart();
+
+	UFUNCTION(BlueprintCallable, Category = "Chart")
+	void ClearChildrenActors();
 
 
 protected:
@@ -29,12 +43,11 @@ protected:
 	virtual void BeginPlay() override;
 
 
-
 private:
 	// Referenced DataManager
 	UPROPERTY()
 	UDataManager* DataManagerPtr;
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void InitilizeDataManager();
 
 };

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "ProceduralMeshComponent.h"
 #include "BarBaseActor.generated.h"
 
 UCLASS()
@@ -15,12 +16,17 @@ public:
 	// Sets default values for this actor's properties
 	ABarBaseActor();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, category = "Mesh")
+	UProceduralMeshComponent* ProcMeshComponent;
+
+	void CreateBarMesh(float BarWidth, float BarHeight);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	//// Called every frame
+	//virtual void Tick(float DeltaTime) override;
 
 };

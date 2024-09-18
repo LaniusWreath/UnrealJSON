@@ -2,6 +2,7 @@
 
 
 #include "Datas/BarBaseActor.h"
+#include "ProceduralMeshComponent.h"
 
 
 // Sets default values
@@ -31,6 +32,8 @@ void ABarBaseActor::CreateBarMesh(float BarHeight)
 	TArray<FProcMeshTangent> Tangents;
 	
 	float BarWidth = Width_bar;
+
+	UE_LOG(LogTemp, Log, TEXT("BarBaseActor : CreateBarMesh : BarHeight= %f, BarWidth : %f"), BarHeight, BarWidth);
 
 	// 버텍스
 	Vertices.Add(FVector(0, 0, 0));
@@ -72,7 +75,6 @@ void ABarBaseActor::CreateBarMesh(float BarHeight)
 	// 프로시저럴 메쉬
 	ProcMeshComponent->CreateMeshSection(0, Vertices, Triangles, Normals, UVs, TArray<FColor>(), Tangents, true);
 }
-
 
 
 // Called every frame

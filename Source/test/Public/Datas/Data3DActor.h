@@ -4,12 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "DataManageGameInstance.h"
+#include "DataTypes.h"
 #include "Data3DActor.generated.h"
 
+class UDataManageGameInstance;
+class UDataManager;
 class USplineComponent;
 class ABarBaseActor;
-
+class UArrowComponent;
 
 UCLASS(Blueprintable)
 class TEST_API AData3DActor : public AActor
@@ -23,12 +25,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	UStaticMeshComponent* BaseMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")
 	USplineComponent* SplineComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")
+	UArrowComponent* ArrowComponent;
 
 	// ABarBaseActor BP¼­ ÂüÁ¶
 	UPROPERTY(EditAnywhere, Category = "BarChart")
@@ -46,13 +50,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Chart")
 	void ClearChildrenActors();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BarChart")
+	float DeviationScaler = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	FShapeChartData TestData;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BarChart")
-	float Width_bar = 100.f;
-
 
 protected:
 	// Called when the game starts or when spawned
@@ -60,7 +62,7 @@ protected:
 
 
 private:
-	// Referenced DataManager
+	// DataManager Reference
 	UPROPERTY()
 	UDataManager* DataManagerPtr;
 	UFUNCTION(BlueprintCallable)

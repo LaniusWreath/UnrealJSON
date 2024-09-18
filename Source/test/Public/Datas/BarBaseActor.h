@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "ProceduralmeshComponent.h"
 #include "BarBaseActor.generated.h"
 
+class UProceduralMeshComponent;
 
 UCLASS()
 class TEST_API ABarBaseActor : public AActor
@@ -26,6 +26,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BarChart")
 	float Width_bar = 100.f;
 
+	
 
 	void CreateBarMesh(float BarHeight);
 

@@ -4,8 +4,11 @@
 #include "Datas/Data3DActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/StaticMeshActor.h"
+#include "Datas/DataManageGameInstance.h"
 #include "Datas/BarBaseActor.h"
+#include "Datas/DataManager.h"
 #include "Components/SplineComponent.h"
+#include "Components/ArrowComponent.h"
 
 AData3DActor::AData3DActor()
 {
@@ -16,6 +19,10 @@ AData3DActor::AData3DActor()
 
 	SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("SplineComponent"));
 	SplineComponent->SetupAttachment(RootComponent);
+
+	ArrowComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent"));
+	ArrowComponent->SetupAttachment(RootComponent);
+	ArrowComponent->SetRelativeRotation(FRotator(90.f, 0.f, 0.f));
 
 	// 에디터에서 다시 설정할 것
 	//static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Engine/BasicShapes/Cube"));
@@ -88,32 +95,44 @@ void AData3DActor::GenerateShapeChart(const FShapeChartData& CopiedData)
 	if (CopiedData.ChartType == "bar")
 	{
 		UE_LOG(LogTemp, Log, TEXT("Data3DActor : Generating Bar Chart"));
-			
-		const float BarWidth = Width_bar;		// 막대 사이 너비
-		//const float BarSpacing = Height_bar;	// 막대 사이 간격
 
+		// Array 사이즈
 		int32 Numbers = CopiedData.Values.Num();
 
 		// 스플라인 총 길이
 		float SplineLength = SplineComponent->GetSplineLength();
-			 
 		// 막대 사이 간격
 		float BarSpacing = SplineLength / (Numbers - 1);
 
+		// 차트 최대 높이
+		float MaxHeight = ArrowComponent->ArrowLength;
+
+		// 차트 평균
+		float sum = 0;
+		for (float value : CopiedData.Values)
+		{
+			sum += value;
+		}
+		float AverageHeight = sum/Numbers;
+		float Scaler = MaxHeight / (2 * AverageHeight);
+
 		for (int32 i = 0; i < Numbers; i++)
 		{
-			float BarHeight = CopiedData.Values[i];
+			float CurrentValue = CopiedData.Values[i];
+			float ScaledDeviation = (CurrentValue - AverageHeight) * DeviationScaler;
+			float ScaledHeight = (CurrentValue+ ScaledDeviation) * Scaler;
+
 			float Distance = i * BarSpacing;
 			
 			FVector BarLocation = SplineComponent->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::Local);	
 
 			ABarBaseActor* NewBar = GetWorld()->SpawnActor<ABarBaseActor>(BarBase);
-			NewBar->CreateBarMesh(BarHeight);
+			NewBar->CreateBarMesh(ScaledHeight);
 			NewBar->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 			NewBar->SetActorRelativeLocation(BarLocation);
 
 			FString Label = CopiedData.Labels.IsValidIndex(i) ? CopiedData.Labels[i] : TEXT("No Label");
-			UE_LOG(LogTemp, Log, TEXT("Data3DActor : Created bar for Label : %s with Height: %f"), *Label, BarHeight);
+			UE_LOG(LogTemp, Log, TEXT("Data3DActor : Created bar for Label : %s with Height: %f"), *Label, ScaledHeight);
 		}
 	}
 }
@@ -131,8 +150,6 @@ void AData3DActor::ClearChildrenActors()
 	}
 	UE_LOG(LogTemp, Log, TEXT("All Children Actors cleard"));
 }
-
-
 
 
 void AData3DActor::GetDataAndCreateChart()

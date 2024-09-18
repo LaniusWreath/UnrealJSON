@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "DataManager.h"
 #include "DataManageGameInstance.generated.h"
+
+class UDataManager;
 
 UCLASS()
 class TEST_API UDataManageGameInstance : public UGameInstance

@@ -5,8 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "DataManageGameInstance.h"
-#include "BarBaseActor.h"
 #include "Data3DActor.generated.h"
+
+class USplineComponent;
+class ABarBaseActor;
+
 
 UCLASS(Blueprintable)
 class TEST_API AData3DActor : public AActor
@@ -20,22 +23,35 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintCallable, Category = "Data")
-	void GetDataFromDataManager();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	UStaticMeshComponent* BaseMesh;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")
+	USplineComponent* SplineComponent;
+
 	// ABarBaseActor BP¼­ ÂüÁ¶
-	UPROPERTY(EditAnywhere, Category = "BarGraph")
+	UPROPERTY(EditAnywhere, Category = "BarChart")
 	TSubclassOf<ABarBaseActor> BarBase;
 
+	virtual void OnConstruction(const FTransform& Transform) override;
+
+
+	UFUNCTION(BlueprintCallable, Category = "Data")
+	void GetDataAndCreateChart();
 
 	UFUNCTION(BlueprintCallable, Category = "Chart")
-	void GenerateShapeChart();
+	void GenerateShapeChart(const FShapeChartData& CopiedData);
 
 	UFUNCTION(BlueprintCallable, Category = "Chart")
 	void ClearChildrenActors();
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	FShapeChartData TestData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BarChart")
+	float Width_bar = 100.f;
 
 
 protected:

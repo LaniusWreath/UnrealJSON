@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "ProceduralMeshComponent.h"
+#include "ProceduralmeshComponent.h"
 #include "BarBaseActor.generated.h"
+
 
 UCLASS()
 class TEST_API ABarBaseActor : public AActor
@@ -19,7 +20,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, category = "Mesh")
 	UProceduralMeshComponent* ProcMeshComponent;
 
-	void CreateBarMesh(float BarWidth, float BarHeight);
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, category = "Mesh")
+	UStaticMeshComponent* BarBaseMesh;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BarChart")
+	float Width_bar = 100.f;
+
+
+	void CreateBarMesh(float BarHeight);
 
 protected:
 	// Called when the game starts or when spawned

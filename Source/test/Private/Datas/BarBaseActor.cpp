@@ -3,6 +3,7 @@
 
 #include "Datas/BarBaseActor.h"
 
+
 // Sets default values
 ABarBaseActor::ABarBaseActor()
 {
@@ -11,6 +12,7 @@ ABarBaseActor::ABarBaseActor()
 
 	ProcMeshComponent = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
 	RootComponent = ProcMeshComponent;
+
 }
 
 // Called when the game starts or when spawned
@@ -20,7 +22,7 @@ void ABarBaseActor::BeginPlay()
 
 }
 
-void ABarBaseActor::CreateBarMesh(float BarWidth, float BarHeight)
+void ABarBaseActor::CreateBarMesh(float BarHeight)
 {
 	TArray<FVector> Vertices;
 	TArray<int32> Triangles;
@@ -28,6 +30,8 @@ void ABarBaseActor::CreateBarMesh(float BarWidth, float BarHeight)
 	TArray<FVector2D> UVs;
 	TArray<FProcMeshTangent> Tangents;
 	
+	float BarWidth = Width_bar;
+
 	// ¹öÅØ½º
 	Vertices.Add(FVector(0, 0, 0));
 	Vertices.Add(FVector(BarWidth, 0, 0));

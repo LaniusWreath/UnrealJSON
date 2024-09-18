@@ -1,9 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+	// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Datas/Data3DActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/StaticMeshActor.h"
+#include "Datas/BarBaseActor.h"
+#include "Components/SplineComponent.h"
 
 AData3DActor::AData3DActor()
 {
@@ -12,15 +14,26 @@ AData3DActor::AData3DActor()
 	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
 	BaseMesh->SetupAttachment(RootComponent);
 
-	// 에디터에서 다시 설정할 것
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Engine/BasicShapes/Cube"));
-	if (MeshAsset.Succeeded())
-	{
-		BaseMesh->SetStaticMesh(MeshAsset.Object);
-		// 메시 모빌리티
-		BaseMesh->SetMobility(EComponentMobility::Movable);
-	}
+	SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("SplineComponent"));
+	SplineComponent->SetupAttachment(RootComponent);
 
+	// 에디터에서 다시 설정할 것
+	//static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Engine/BasicShapes/Cube"));
+	//if (MeshAsset.Succeeded())
+	//{
+	//	BaseMesh->SetStaticMesh(MeshAsset.Object);
+	//	// 메시 모빌리티
+	//	BaseMesh->SetMobility(EComponentMobility::Movable);
+	//}
+
+}
+
+void AData3DActor::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+
+	GenerateShapeChart(TestData);
+	
 }
 
 
@@ -66,55 +79,42 @@ void AData3DActor::Tick(float DeltaTime)
 
 
 // 막대 차트 
-void AData3DActor::GenerateShapeChart()
+void AData3DActor::GenerateShapeChart(const FShapeChartData& CopiedData)
 {
-	UE_LOG(LogTemp, Log, TEXT("Generating BarChart"));
-	if (DataManagerPtr)
-	{
+	UE_LOG(LogTemp, Log, TEXT("Data3DActor : Generating ShapeChart"));
 		ClearChildrenActors();
-		
-		// 데이터 복사
-		const FShapeChartData& CopiedData = DataManagerPtr->ShapeChartData;
 
-		// 바 타입 차트 생성
-		if (CopiedData.ChartType == "bar")
-		{
-			UE_LOG(LogTemp, Log, TEXT("Data3DActor : Generating Bar Chart"));
-			
-			FVector StartPosition(0.f, 0.f, 0.f);
-			float BarWidth = 100.f;		// 막대 사이 너비
-			float BarSpacing = 120.f;	// 막대 사이 간격
-
-			int32 Numbers = CopiedData.Values.Num();
-			for (int32 i = 0; i < Numbers; i++)
-			{
-				float BarHeight = CopiedData.Values[i];
-
-				FVector BarLocation = StartPosition + FVector(BarSpacing * i, 0.f, BarHeight / 2);
-				FRotator BarRotation = FRotator::ZeroRotator;
-
-				FActorSpawnParameters SpawnParams;
-				SpawnParams.Owner = this;
-				ABarBaseActor* BarActor = GetWorld()->SpawnActor<ABarBaseActor>(BarBase, BarLocation, BarRotation, SpawnParams);
-
-				if (BarActor)
-				{
-					// BaseMesh의 자손으로 설정
-					BarActor->CreateBarMesh(BarWidth, BarHeight);
-
-					BarActor->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
-
-					FString Label = CopiedData.Labels.IsValidIndex(i) ? CopiedData.Labels[i] : TEXT("No Label");
-					UE_LOG(LogTemp, Log, TEXT("Data3DActor : Created bar for Label : %s with Height: %f"), *Label, BarHeight);
-
-				}
-			}
-		}
-		
-	}
-	else
+	// 바 타입 차트 생성
+	if (CopiedData.ChartType == "bar")
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Data3DActor : ChartType is not bar or check DataManagerPtr"));
+		UE_LOG(LogTemp, Log, TEXT("Data3DActor : Generating Bar Chart"));
+			
+		const float BarWidth = Width_bar;		// 막대 사이 너비
+		//const float BarSpacing = Height_bar;	// 막대 사이 간격
+
+		int32 Numbers = CopiedData.Values.Num();
+
+		// 스플라인 총 길이
+		float SplineLength = SplineComponent->GetSplineLength();
+			 
+		// 막대 사이 간격
+		float BarSpacing = SplineLength / (Numbers - 1);
+
+		for (int32 i = 0; i < Numbers; i++)
+		{
+			float BarHeight = CopiedData.Values[i];
+			float Distance = i * BarSpacing;
+			
+			FVector BarLocation = SplineComponent->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::Local);	
+
+			ABarBaseActor* NewBar = GetWorld()->SpawnActor<ABarBaseActor>(BarBase);
+			NewBar->CreateBarMesh(BarHeight);
+			NewBar->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+			NewBar->SetActorRelativeLocation(BarLocation);
+
+			FString Label = CopiedData.Labels.IsValidIndex(i) ? CopiedData.Labels[i] : TEXT("No Label");
+			UE_LOG(LogTemp, Log, TEXT("Data3DActor : Created bar for Label : %s with Height: %f"), *Label, BarHeight);
+		}
 	}
 }
 
@@ -133,7 +133,9 @@ void AData3DActor::ClearChildrenActors()
 }
 
 
-void AData3DActor::GetDataFromDataManager()
+
+
+void AData3DActor::GetDataAndCreateChart()
 {
 	if (DataManagerPtr)
 	{
@@ -143,7 +145,7 @@ void AData3DActor::GetDataFromDataManager()
 		case None:
 			break;
 		case E_SHAPE:
-			GenerateShapeChart();
+			GenerateShapeChart(DataManagerPtr->ShapeChartData);
 
 			break;
 		case E_XY:

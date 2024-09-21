@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "BarBaseActor.generated.h"
 
+class UTimelineComponent;
 class UProceduralMeshComponent;
 
 UCLASS()
@@ -17,18 +18,21 @@ public:
 	// Sets default values for this actor's properties
 	ABarBaseActor();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, category = "Mesh")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chart")
 	UProceduralMeshComponent* ProcMeshComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, category = "Mesh")
-	UStaticMeshComponent* BarBaseMesh;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BarChart")
-	float Width_bar = 100.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Material")
+	UMaterialInstance* MeshMaterial;
 
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chart")
+	UTimelineComponent* BarAnimationTimeline;
 
-	void CreateBarMesh(float BarHeight);
+	UPROPERTY(EditAnywhere, Category = "Chart")
+	UCurveFloat* AnimationCurve;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
+	float Width_bar = 10.f;
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -38,4 +42,19 @@ public:
 	//// Called every frame
 	//virtual void Tick(float DeltaTime) override;
 
+	// 타임라인에서 불러올 함수
+	UFUNCTION()
+	void OnAnimationUpdate(float Value);
+
+	// 애니메이션 실행 관리 함수
+	UFUNCTION()
+	void PlayBarAnimation();
+
+	UFUNCTION(BlueprintCallable, Category = "Cahrt")
+	void CreateBarMesh(float BarHeight);
+
+//#if WITH_EDITOR
+//	// 에디터에서 프로퍼티가 변경될 때 호출되는 함수, AActor에서 상속
+//	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+//#endif
 };

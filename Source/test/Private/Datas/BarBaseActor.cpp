@@ -3,7 +3,7 @@
 
 #include "Datas/BarBaseActor.h"
 #include "ProceduralMeshComponent.h"
-
+#include "Components/TimelineComponent.h"
 
 // Sets default values
 ABarBaseActor::ABarBaseActor()
@@ -14,6 +14,10 @@ ABarBaseActor::ABarBaseActor()
 	ProcMeshComponent = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
 	RootComponent = ProcMeshComponent;
 
+	// Procedural Mesh Component를 Navigation 시스템에서 제외. 경로탐색이나 ai상호작용이 필요 없는 경우, 꺼도 좋음. 
+	// 안끄면 Navigation system에서 화냄. (계속 감시중)
+	ProcMeshComponent->SetCanEverAffectNavigation(false);
+	BarAnimationTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("BarAnimationTimeline"));
 }
 
 // Called when the game starts or when spawned
@@ -74,6 +78,43 @@ void ABarBaseActor::CreateBarMesh(float BarHeight)
 
 	// 프로시저럴 메쉬
 	ProcMeshComponent->CreateMeshSection(0, Vertices, Triangles, Normals, UVs, TArray<FColor>(), Tangents, true);
+
+	if (MeshMaterial)
+	{
+		ProcMeshComponent->SetMaterial(0, MeshMaterial);
+	}
+
+	PlayBarAnimation();
+}
+
+
+// 애니메이션 실행 제어
+void ABarBaseActor::PlayBarAnimation()
+{
+	if (AnimationCurve)
+	{
+		FOnTimelineFloat TimelineCallBack;
+		// 타임라인에 함수 바인딩
+		TimelineCallBack.BindUFunction(this, FName("OnAnimationUpdate"));
+
+		// Timeline에 Curve와 Curve를 사용할 Callback 함수 추가
+		BarAnimationTimeline->AddInterpFloat(AnimationCurve, TimelineCallBack);
+		BarAnimationTimeline->SetLooping(false);
+		BarAnimationTimeline->PlayFromStart();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("BarBaseActor : Failed finding Animation Cuvrve"));
+	}
+}
+
+// 막대 스케일 변경 애니메이션 실행
+void ABarBaseActor::OnAnimationUpdate(float Value)
+{
+	UE_LOG(LogTemp, Log, TEXT("BarBaseActor : BarAnimation Executing, Current Height : %f"), Value);
+
+	FVector CurrentScale = GetActorScale();
+	SetActorScale3D(FVector(CurrentScale.X, CurrentScale.Y, Value));
 }
 
 

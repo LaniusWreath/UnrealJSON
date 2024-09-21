@@ -38,7 +38,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Chart")
 	TSubclassOf<ABarBaseActor> BarBase;
 
-	virtual void OnConstruction(const FTransform& Transform) override;
+	UPROPERTY(EditAnywhere, Category = "Component")
+	TArray<UChildActorComponent*> ChildActorComponents;
 
 
 	UFUNCTION(BlueprintCallable, Category = "Chart")
@@ -46,6 +47,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Chart")
 	void GenerateShapeChart(const FShapeChartData& CopiedData);
+
 
 	UFUNCTION(BlueprintCallable, Category = "Chart")
 	void ClearChildrenActors();
@@ -56,6 +58,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
 	FShapeChartData TestShapeData;
 
+	UFUNCTION(CallInEditor, Category = "Chart")
+	void UpdateInEditor();
+
+	virtual void OnConstruction(const FTransform& Transform) override;
 
 protected:
 	// Called when the game starts or when spawned

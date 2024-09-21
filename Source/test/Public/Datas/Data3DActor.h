@@ -35,13 +35,13 @@ public:
 	UArrowComponent* ArrowComponent;
 
 	// ABarBaseActor BP¼­ ÂüÁ¶
-	UPROPERTY(EditAnywhere, Category = "BarChart")
+	UPROPERTY(EditAnywhere, Category = "Chart")
 	TSubclassOf<ABarBaseActor> BarBase;
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 
-	UFUNCTION(BlueprintCallable, Category = "Data")
+	UFUNCTION(BlueprintCallable, Category = "Chart")
 	void GetDataAndCreateChart();
 
 	UFUNCTION(BlueprintCallable, Category = "Chart")
@@ -50,11 +50,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Chart")
 	void ClearChildrenActors();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BarChart")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
 	float DeviationScaler = 1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	FShapeChartData TestData;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
+	FShapeChartData TestShapeData;
+
 
 protected:
 	// Called when the game starts or when spawned

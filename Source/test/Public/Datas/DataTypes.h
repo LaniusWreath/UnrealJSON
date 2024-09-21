@@ -12,20 +12,22 @@ struct FShapeChartData
 	GENERATED_BODY()
 
 	// 차트 타입 : "bar", "line", "pie" 등 
-	UPROPERTY(BlueprintReadOnly)
-	FString ChartType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString ChartType = "bar";
 
-	UPROPERTY(BlueprintReadOnly)
-	FString XName;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString XName = "Date";
 	// x축 라벨 또는 pie 차트 레벨
-	UPROPERTY(BlueprintReadOnly)
-	TArray<FString> Labels;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FString> Labels = {"2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04"};
 
-	UPROPERTY(BlueprintReadOnly)
-	FString YName;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString YName = "Temperature";
 	// y축 값 또는 pie 차트 비율
-	UPROPERTY(BlueprintReadOnly)
-	TArray<float> Values;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<float> Values = { 20.5, 21.0, 19.8, 22.1 };
+
+
 };
 
 USTRUCT(BlueprintType)
@@ -33,14 +35,14 @@ struct FXYChartData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString XName;
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<float> XData;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString YName;
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<float> YData;
 };
 
@@ -49,10 +51,10 @@ struct FXYZChartData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FString> Names;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FVector> Coordinates;
 };
 

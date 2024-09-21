@@ -24,6 +24,7 @@ AData3DActor::AData3DActor()
 	ArrowComponent->SetupAttachment(RootComponent);
 	ArrowComponent->SetRelativeRotation(FRotator(90.f, 0.f, 0.f));
 
+
 	// 에디터에서 다시 설정할 것
 	//static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Engine/BasicShapes/Cube"));
 	//if (MeshAsset.Succeeded())
@@ -35,11 +36,12 @@ AData3DActor::AData3DActor()
 
 }
 
+
 void AData3DActor::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
-	GenerateShapeChart(TestData);
+	GenerateShapeChart(TestShapeData);
 	
 }
 

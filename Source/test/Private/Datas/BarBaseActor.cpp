@@ -44,37 +44,49 @@ void ABarBaseActor::CreateBarMesh(float BarHeight)
 	Vertices.Add(FVector(BarWidth, 0, 0));
 	Vertices.Add(FVector(BarWidth, BarWidth, 0));
 	Vertices.Add(FVector(0, BarWidth, 0));
-	
 	Vertices.Add(FVector(0, 0, BarHeight));
 	Vertices.Add(FVector(BarWidth, 0, BarHeight));
 	Vertices.Add(FVector(BarWidth, BarWidth, BarHeight));
 	Vertices.Add(FVector(0, BarWidth, BarHeight));
 
 	// 트라이앵글
-	Triangles.Add(0); Triangles.Add(1); Triangles.Add(4);
-	Triangles.Add(1); Triangles.Add(5); Triangles.Add(4);
+	Triangles.Append({ 0,1,2,0,2,3 });	// 밑면
+	Triangles.Append({ 4,7,6,4,6,5 });	// 윗면
+	Triangles.Append({ 2,6,7,2,7,3 });	// 앞
+	Triangles.Append({ 1,5,6,1,6,2 });	// 오른쪽
+	Triangles.Append({ 0,4,5,0,5,1});	// 뒤
+	Triangles.Append({ 3,7,4,3,4,0 });	// 왼쪽
 
-	Triangles.Add(2); Triangles.Add(3); Triangles.Add(7);
-	Triangles.Add(2); Triangles.Add(7); Triangles.Add(6);
+	// 노멀 (법선 벡터)
+	Normals.Append({ FVector(0, 0, -1), FVector(0, 0, -1), FVector(0, 0, -1), FVector(0, 0, -1), FVector(0, 0, -1), FVector(0, 0, -1) });
+	Normals.Append({ FVector(0, 0, 1), FVector(0, 0, 1), FVector(0, 0, 1), FVector(0, 0, 1), FVector(0, 0, 1), FVector(0, 0, 1) });
+	Normals.Append({ FVector(0, 1, 0), FVector(0, 1, 0), FVector(0, 1, 0), FVector(0, 1, 0), FVector(0, 1, 0), FVector(0, 1, 0) });
+	Normals.Append({ FVector(1, 0, 0), FVector(1, 0, 0), FVector(1, 0, 0), FVector(1, 0, 0), FVector(1, 0, 0), FVector(1, 0, 0) });
+	Normals.Append({ FVector(0, -1, 0), FVector(0, -1, 0), FVector(0, -1, 0), FVector(0, -1, 0), FVector(0, -1, 0), FVector(0, -1, 0) });
+	Normals.Append({ FVector(-1, 0, 0), FVector(-1, 0, 0), FVector(-1, 0, 0), FVector(-1, 0, 0), FVector (- 1, 0, 0), FVector(-1, 0, 0)});
 
-	Triangles.Add(0); Triangles.Add(4); Triangles.Add(7);
-	Triangles.Add(0); Triangles.Add(7); Triangles.Add(3);
 
-	Triangles.Add(1); Triangles.Add(2); Triangles.Add(6);
-	Triangles.Add(1); Triangles.Add(6); Triangles.Add(5);
+	// UV (트라이앵글)의 각 꼭짓점 부분을 2D 사각형으로 매핑)
+	UVs.Add(FVector2D(0.f, 0.f));
+	UVs.Add(FVector2D(1.f, 0.f));
+	UVs.Add(FVector2D(1.f, 0.f));
+	UVs.Add(FVector2D(0.f, 1.f));
+	UVs.Add(FVector2D(0.f, 0.f));
+	UVs.Add(FVector2D(1.f, 0.f));
+	UVs.Add(FVector2D(1.f, 1.f));
+	UVs.Add(FVector2D(0.f, 1.f));
 
-	Triangles.Add(0); Triangles.Add(3); Triangles.Add(2);
-	Triangles.Add(0); Triangles.Add(2); Triangles.Add(1);
 
-	Triangles.Add(4); Triangles.Add(5); Triangles.Add(6);
-	Triangles.Add(4); Triangles.Add(6); Triangles.Add(7);
+	// 탄젠트 (법선에 직교하는 벡터 + UV 평면의 U축을 따라가는 벡터)
+	Tangents.Add(FProcMeshTangent(1, 0, 0));
+	Tangents.Add(FProcMeshTangent(1, 0, 0));
+	Tangents.Add(FProcMeshTangent(1, 0, 0));
+	Tangents.Add(FProcMeshTangent(1, 0, 0));
 
-	// 노멀
-	Normals.Init(FVector(0, 0, 1), Vertices.Num());
-	// UV
-	UVs.Init(FVector2d(0, 0), Vertices.Num());
-	// 탄젠트
-	Tangents.Init(FProcMeshTangent(1, 0, 0), Vertices.Num());
+	Tangents.Add(FProcMeshTangent(1, 0, 0));
+	Tangents.Add(FProcMeshTangent(1, 0, 0));
+	Tangents.Add(FProcMeshTangent(1, 0, 0));
+	Tangents.Add(FProcMeshTangent(1, 0, 0));
 
 	// 프로시저럴 메쉬
 	ProcMeshComponent->CreateMeshSection(0, Vertices, Triangles, Normals, UVs, TArray<FColor>(), Tangents, true);

@@ -52,7 +52,30 @@ void UDataManager::LoadDataFromJSON(const FString& FilePath)
 				ShapeChartData.Values.Add(Value->AsNumber());
 			}
 
-			LastChartType = EChartTypes::E_SHAPE;
+			// 열거형에 차트타입 저장
+			int32 ChartTypeNumber = DataTypes::MapChartTypes[ChartType.ToUpper()];
+			UE_LOG(LogTemp, Log, TEXT("DataManger : CurrentChartTypeNumber is %d"), ChartTypeNumber);
+			switch (ChartTypeNumber)
+			{
+			case(1):
+			{
+				LastChartType = EChartTypes::BAR;
+				break;
+			}
+			case(2):
+			{
+				LastChartType = EChartTypes::LINE;
+				break;
+			}
+			case(3):
+			{
+				LastChartType = EChartTypes::PIE;
+				break;
+			}
+			default:
+				break;
+			}
+			
 		}
 
 		// 차트 타입이 2차원 xy일 경우
@@ -82,7 +105,7 @@ void UDataManager::LoadDataFromJSON(const FString& FilePath)
 				XYChartData.YData.Add(Value->AsNumber());
 			}
 
-			LastChartType = EChartTypes::E_XY;
+			LastChartType = EChartTypes::XY;
 		}
 
 		// 차트 타입이 3차원 벡터일 경우
@@ -104,7 +127,7 @@ void UDataManager::LoadDataFromJSON(const FString& FilePath)
 				XYZChartData.Names.Add(PointName);
 			}
 
-			LastChartType = EChartTypes::E_XYZ;
+			LastChartType = EChartTypes::XYZ;
 		}
 		
 		// 차트 타입이 자유로운 형식일 경우
@@ -128,7 +151,7 @@ void UDataManager::LoadDataFromJSON(const FString& FilePath)
 				}
 			}
 			
-			LastChartType = EChartTypes::E_FREE;
+			LastChartType = EChartTypes::FREE;
 		}
 
 		// 차트 타입 에러

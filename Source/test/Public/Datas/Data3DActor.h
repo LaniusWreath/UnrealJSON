@@ -48,6 +48,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Chart")
 	void GenerateShapeChart(const FShapeChartData& CopiedData);
 
+	UFUNCTION(BlueprintCallable, Category = "Chart")
+	void PlayChildrenAnimation();
 
 	UFUNCTION(BlueprintCallable, Category = "Chart")
 	void ClearChildrenActors();
@@ -59,8 +61,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
 	FShapeChartData TestShapeData;
 
+
 	UFUNCTION(CallInEditor, Category = "Chart")
 	void UpdateInEditor();
+
+
 
 
 	//virtual void OnConstruction(const FTransform& Transform) override;

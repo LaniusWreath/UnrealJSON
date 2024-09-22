@@ -63,10 +63,12 @@ UENUM(BlueprintType)
 enum EChartTypes : uint8
 {
 	None = 0 UMETA(DisplayName = "None"),
-	E_SHAPE = 1	UMETA(DisplayName = "Shape"),
-	E_XY = 2 UMETA(DisplayName = "XY"),
-	E_XYZ = 3 UMETA(DisplayName = "XYZ"),
-	E_FREE = 4 UMETA(DisplayName = "FREE"),
+	BAR = 1 UMETA(DisplayName = "BAR"),
+	LINE = 2 UMETA(DisplayName = "LINE"),
+	PIE = 3 UMETA(DisplayName = "PIE"),
+	XY = 4 UMETA(DisplayName = "XY"),
+	XYZ = 5 UMETA(DisplayName = "XYZ"),
+	FREE = 6 UMETA(DisplayName = "FREE"),
 
 };
 
@@ -74,6 +76,10 @@ class TEST_API DataTypes
 {
 public:
 	DataTypes();
+
+	UPROPERTY(VisibleAnywhere)
+	static TMap<FString, int32> MapChartTypes ;
+
 	~DataTypes();
 };
 

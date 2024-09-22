@@ -42,7 +42,6 @@ void AData3DActor::UpdateInEditor()
 {
 	UE_LOG(LogTemp, Log, TEXT("Data3DActor : Debuging Chart Instance : %s"), *GetName());
 	GenerateShapeChart(TestShapeData);
-
 }
 
 //void AData3DActor::OnConstruction(const FTransform& Transform)
@@ -174,7 +173,6 @@ void AData3DActor::GenerateShapeChart(const FShapeChartData& CopiedData)
 
 					ChildBar->CreateBarMesh(ScaledHeight);
 
-					// 바 생성 애니메이션
 					//ChildBar->PlayBarAnimation();
 
 					// 이동
@@ -193,6 +191,42 @@ void AData3DActor::GenerateShapeChart(const FShapeChartData& CopiedData)
 	}
 }
 
+void AData3DActor::PlayChildrenAnimation()
+{
+	if (DataManagerPtr)
+	{
+		EChartTypes LastType = DataManagerPtr->LastChartType;
+		switch (LastType)
+		{
+		case None:
+			break;
+		case BAR:
+			for (UChildActorComponent* ChildActorComponent : ChildActorComponents)
+			{
+				if (ChildActorComponent && ChildActorComponent->GetChildActor())
+				{
+					ABarBaseActor* BarChildActor = Cast<ABarBaseActor>(ChildActorComponent->GetChildActor());
+					BarChildActor->PlayBarAnimation();
+				}
+			}
+			break;
+		case LINE:
+			break;
+		case PIE:
+			break;
+		case XY:
+			break;
+		case XYZ:
+			break;
+		case FREE:
+			break;
+		default:
+			break;
+		}
+			
+	}
+	
+}
 
 // Base에 붙은 액터 삭제
 void AData3DActor::ClearChildrenActors()
@@ -220,25 +254,29 @@ void AData3DActor::GetDataAndCreateChart()
 	if (DataManagerPtr)
 	{
 		EChartTypes LastType = DataManagerPtr->LastChartType;
+		UE_LOG(LogTemp, Log, TEXT("Data3DActor : LastChartType is %d"), LastType)
 		switch (LastType)
 		{
 		case None:
 			break;
-		case E_SHAPE:
+		case BAR:
 			GenerateShapeChart(DataManagerPtr->ShapeChartData);
-
 			break;
-		case E_XY:
+		case LINE:
 			break;
-		case E_XYZ:
+		case PIE:
 			break;
-		case E_FREE:
+		case XY:
+			break;
+		case XYZ:
+			break;
+		case FREE:
 			break;
 		default:
 			break;
 		}
-	}
 
+	}
 }
 
 

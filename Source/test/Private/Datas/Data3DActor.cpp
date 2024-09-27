@@ -41,7 +41,7 @@ AData3DActor::AData3DActor()
 void AData3DActor::UpdateInEditor()
 {
 	UE_LOG(LogTemp, Log, TEXT("Data3DActor : Debuging Chart Instance : %s"), *GetName());
-	GenerateShapeChart(TestShapeData);
+	CreateShapeChart(TestShapeData);
 }
 
 //void AData3DActor::OnConstruction(const FTransform& Transform)
@@ -94,7 +94,7 @@ void AData3DActor::Tick(float DeltaTime)
 
 
 // 모양 차트 
-void AData3DActor::GenerateShapeChart(const FShapeChartData& CopiedData)
+void AData3DActor::CreateShapeChart(const FShapeChartData& CopiedData)
 {
 	UE_LOG(LogTemp, Log, TEXT("Data3DActor : Generating ShapeChart"));
 	ClearChildrenActors();
@@ -282,7 +282,7 @@ void AData3DActor::GetDataAndCreateChart()
 		case None:
 			break;
 		case BAR:
-			GenerateShapeChart(DataManagerPtr->ShapeChartData);
+			CreateShapeChart(DataManagerPtr->ShapeChartData);
 			break;
 		case LINE:
 			break;

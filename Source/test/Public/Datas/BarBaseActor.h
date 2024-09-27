@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "BarBaseActor.generated.h"
 
+
+class UTextRenderComponent;
 class UTimelineComponent;
 class UProceduralMeshComponent;
 
@@ -30,6 +32,12 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Chart")
 	UCurveFloat* AnimationCurve;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chart")
+	UTextRenderComponent* TextRenderComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
+	FColor Color;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
 	float Width_bar = 10.f;
 
@@ -50,8 +58,11 @@ public:
 	UFUNCTION()
 	void PlayBarAnimation();
 
-	UFUNCTION(BlueprintCallable, Category = "Cahrt")
+	UFUNCTION(BlueprintCallable, Category = "Chart")
 	void CreateBarMesh(float BarHeight);
+
+	UFUNCTION(BlueprintCallable, Category = " Chart")
+	void CreateTextMesh(const FString& LabelName, const float& BarHeight, FColor& Color);
 
 //#if WITH_EDITOR
 //	// 에디터에서 프로퍼티가 변경될 때 호출되는 함수, AActor에서 상속

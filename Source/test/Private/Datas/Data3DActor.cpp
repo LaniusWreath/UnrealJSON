@@ -93,7 +93,7 @@ void AData3DActor::Tick(float DeltaTime)
 }
 
 
-// 모양 차트 
+// 모양 차트 생성
 void AData3DActor::CreateShapeChart(const FShapeChartData& CopiedData)
 {
 	UE_LOG(LogTemp, Log, TEXT("Data3DActor : Generating ShapeChart"));
@@ -165,7 +165,7 @@ bool AData3DActor::PrepareBarValues(const TArray<float>& ValueArray, float& Aver
 	}
 }
 
-bool AData3DActor::GenerateBar(const TArray<float>& ValueArray, const int BarSpacing, const float AverageHeight, const float BarHeightScaler)
+bool AData3DActor::GenerateBar(const TArray<float>& ValueArray, const TArray<FString>& LabelArray, const int BarSpacing, const float AverageHeight, const float BarHeightScaler)
 {
 	int32 Numbers = ValueArray.Num();
 
@@ -200,14 +200,18 @@ bool AData3DActor::GenerateBar(const TArray<float>& ValueArray, const int BarSpa
 			// 배열에 추가
 			ChildActorComponents.Add(NewChildActorComponent);
 
-			// 바 메쉬 생성
+			// ABarBaseAcotr로 UChildActorComponent 캐스팅
 			ABarBaseActor* ChildBar = Cast<ABarBaseActor>(NewChildActorComponent->GetChildActor());
 
+			
 			if (ChildBar)
 			{
 				//UE_LOG(LogTemp, Log, TEXT("Data3DActor : ChildBP : %s"), *ChildBar->AnimationCurve->GetName());
-
+				
+				// 바 프로시저럴 메쉬 생성
 				ChildBar->CreateBarMesh(ScaledHeight);
+				// 바 텍스트 메쉬 생성
+				ChildBar->CreateTextMesh(); //여기부터 하면 됨
 
 				//ChildBar->PlayBarAnimation();
 

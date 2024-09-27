@@ -4,6 +4,7 @@
 #include "Datas/BarBaseActor.h"
 #include "ProceduralMeshComponent.h"
 #include "Components/TimelineComponent.h"
+#include "Components/TextRenderComponent.h"
 
 // Sets default values
 ABarBaseActor::ABarBaseActor()
@@ -23,6 +24,10 @@ ABarBaseActor::ABarBaseActor()
 	//PrimaryActorTick.bCanEverTick = true;
 	//PrimaryActorTick.bStartWithTickEnabled = true;
 	//PrimaryActorTick.bTickEvenWhenPaused = true;
+
+	TextRenderComponent = CreateDefaultSubobject<UTextRenderComponent>(TEXT("TextRenderComponent"));
+	TextRenderComponent->SetupAttachment(RootComponent);
+	
 }
 
 // Called when the game starts or when spawned
@@ -102,6 +107,20 @@ void ABarBaseActor::CreateBarMesh(float BarHeight)
 	}
 }
 
+void ABarBaseActor::CreateTextMesh(const FString& LabelName, const float& BarHeight, FColor& Color)
+{
+	int Padding = 20;
+
+	// 텍스트 설정
+	TextRenderComponent->SetText(FText::FromString(LabelName));
+
+	// 텍스트 색상 설정 (옵션)
+	TextRenderComponent->SetTextRenderColor(Color);
+
+	// 텍스트 크기 및 위치 설정 (옵션)
+	TextRenderComponent->SetWorldSize(100.f);
+	TextRenderComponent->SetRelativeLocation(FVector(0.f, 0.f, BarHeight + Padding));
+}
 
 // 애니메이션 실행 제어
 void ABarBaseActor::PlayBarAnimation()

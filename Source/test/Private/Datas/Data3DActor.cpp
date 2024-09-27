@@ -125,64 +125,16 @@ void AData3DActor::CreateShapeChart(const FShapeChartData& CopiedData)
 			return;
 		}
 
-		// 바 차트 생성
-		for (int32 i = 0; i < Numbers; i++)
+		bool isGenerateDone = GenerateBar(ValueArray, BarSpacing, AverageHeight, BarHeightScaler);
+		if (!isGenerateDone)
 		{
-			float CurrentValue = CopiedData.Values[i];
-			float ScaledDeviation = (CurrentValue - AverageHeight) * DeviationScaler;
-			float ScaledHeight = (CurrentValue+ ScaledDeviation) * BarHeightScaler;
-
-			float Distance = i * BarSpacing;
-			
-			FVector BarLocation = SplineComponent->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::Local);	
-
-			// 자손 액터(차트 액터) 넣을 UChildActorComponent* 반복 생성
-			UChildActorComponent* NewChildActorComponent = NewObject<UChildActorComponent>(this);
-			NewChildActorComponent->SetupAttachment(RootComponent);
-
-			if (NewChildActorComponent)
-			{
-				UE_LOG(LogTemp, Log, TEXT("Data3DActor : Creating Bar Child Object : %s"), *NewChildActorComponent->GetName());
-
-				// 자손 컴포넌트 부착
-				NewChildActorComponent->SetupAttachment(RootComponent);
-
-				//자손 액터 클래스 설정
-				NewChildActorComponent->SetChildActorClass(BarBase);
-
-				// 자손 액터 생성
-				NewChildActorComponent->CreateChildActor();
-				
-				// 배열에 추가
-				ChildActorComponents.Add(NewChildActorComponent);
-
-				// 바 메쉬 생성
-				ABarBaseActor* ChildBar = Cast<ABarBaseActor>(NewChildActorComponent->GetChildActor());
-
-				if (ChildBar)
-				{
-					//UE_LOG(LogTemp, Log, TEXT("Data3DActor : ChildBP : %s"), *ChildBar->AnimationCurve->GetName());
-
-					ChildBar->CreateBarMesh(ScaledHeight);
-
-					//ChildBar->PlayBarAnimation();
-
-					// 이동
-					ChildBar->SetActorRelativeLocation(BarLocation);
-					
-				}
-				else
-				{
-					UE_LOG(LogTemp, Error, TEXT("Data3DActor : Failed Casting ChildBarBaseActor"));
-				}
-			}
-
-			FString Label = CopiedData.Labels.IsValidIndex(i) ? CopiedData.Labels[i] : TEXT("No Label");
-			UE_LOG(LogTemp, Log, TEXT("Data3DActor : Created bar for Label : %s with Height: %f"), *Label, ScaledHeight);
+			UE_LOG(LogTemp, Log, TEXT("Data3DActor : Generating Bar Failed"));
+			return;
 		}
+		
 	}
 }
-// PreperateBar(ValueArray, &AverageHeight, &BarHeightScaler, SplineLength, MaxHeight);
+// 막대 그래프 사전 준비 함수 : 막대 그래프의 데이터, 값을 넣을 평균 값, 값을 넣을 가중치값 스플라인 길이, 최고 높이)
 bool AData3DActor::PrepareBarValues(const TArray<float>& ValueArray, float& AverageHeightResult, float&BarHeightScalerResult , int SplineLength, int MaxHeight)
 {
 	UE_LOG(LogTemp, Log, TEXT("Data3DActor : Preperating Bar Chart"));
@@ -211,6 +163,68 @@ bool AData3DActor::PrepareBarValues(const TArray<float>& ValueArray, float& Aver
 	{
 		return true;
 	}
+}
+
+bool AData3DActor::GenerateBar(const TArray<float>& ValueArray, const int BarSpacing, const float AverageHeight, const float BarHeightScaler)
+{
+	int32 Numbers = ValueArray.Num();
+
+	// 바 차트 생성 : ValueArray, AverageHeight, BarHeightScaler
+	for (int32 i = 0; i < Numbers; i++)
+	{
+		float CurrentValue = ValueArray[i];
+		float ScaledDeviation = (CurrentValue - AverageHeight) * DeviationScaler;
+		float ScaledHeight = (CurrentValue + ScaledDeviation) * BarHeightScaler;
+
+		float Distance = i * BarSpacing;
+
+		FVector BarLocation = SplineComponent->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::Local);
+
+		// 자손 액터(차트 액터) 넣을 UChildActorComponent* 반복 생성
+		UChildActorComponent* NewChildActorComponent = NewObject<UChildActorComponent>(this);
+		NewChildActorComponent->SetupAttachment(RootComponent);
+
+		if (NewChildActorComponent)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Data3DActor : Creating Bar Child Object : %s"), *NewChildActorComponent->GetName());
+
+			// 자손 컴포넌트 부착
+			NewChildActorComponent->SetupAttachment(RootComponent);
+
+			//자손 액터 클래스 설정
+			NewChildActorComponent->SetChildActorClass(BarBase);
+
+			// 자손 액터 생성
+			NewChildActorComponent->CreateChildActor();
+
+			// 배열에 추가
+			ChildActorComponents.Add(NewChildActorComponent);
+
+			// 바 메쉬 생성
+			ABarBaseActor* ChildBar = Cast<ABarBaseActor>(NewChildActorComponent->GetChildActor());
+
+			if (ChildBar)
+			{
+				//UE_LOG(LogTemp, Log, TEXT("Data3DActor : ChildBP : %s"), *ChildBar->AnimationCurve->GetName());
+
+				ChildBar->CreateBarMesh(ScaledHeight);
+
+				//ChildBar->PlayBarAnimation();
+
+				// 이동
+				ChildBar->SetActorRelativeLocation(BarLocation);
+
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("Data3DActor : Failed Casting ChildBarBaseActor"));
+				return false;
+			}
+		}
+
+		UE_LOG(LogTemp, Log, TEXT("Data3DActor : Created bar Number with Height: %f"),ScaledHeight);
+	}
+	return true;
 }
 
 void AData3DActor::PlayChildrenAnimation()

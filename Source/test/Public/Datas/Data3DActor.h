@@ -51,6 +51,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Chart")
 	bool PrepareBarValues(const TArray<float>& ValueArray, float& AverageHeightResult, float& BarHeightScalerResult, int SplineLength, int MaxHeight);
 
+	UFUNCTION(BlueprintCallable, Category = "Chart")
+	bool GenerateBar(const TArray<float>& ValueArray, const int BarSpacing, const float AverageHeight, const float BarHeightScaler);
 
 	UFUNCTION(BlueprintCallable, Category = "Chart")
 	void PlayChildrenAnimation();

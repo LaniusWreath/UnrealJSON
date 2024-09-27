@@ -20,9 +20,9 @@ ABarBaseActor::ABarBaseActor()
 	BarAnimationTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("BarAnimationTimeline"));
 
 	// 에디터상에서도 틱 계속 돌아가게끔. 추후 성능 모니터링 필요.
-	PrimaryActorTick.bCanEverTick = true;
-	PrimaryActorTick.bStartWithTickEnabled = true;
-	PrimaryActorTick.bTickEvenWhenPaused = true;
+	//PrimaryActorTick.bCanEverTick = true;
+	//PrimaryActorTick.bStartWithTickEnabled = true;
+	//PrimaryActorTick.bTickEvenWhenPaused = true;
 }
 
 // Called when the game starts or when spawned

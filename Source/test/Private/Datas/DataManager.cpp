@@ -6,6 +6,8 @@
 #include "Datas/HTTPHandler.h"
 #include "Serialization/JsonWriter.h"
 
+
+// 탐색기 패스로 파일 읽기, 나중에 오버로딩 하던 뭘 하던 JSON만 넘겨받는 함수 만들 것
 void UDataManager::LoadDataFromJSON(const FString& FilePath)
 {
 	if (!JSONHandlerInstance)
@@ -14,14 +16,13 @@ void UDataManager::LoadDataFromJSON(const FString& FilePath)
 	}
 	if (JSONHandlerInstance)
 	{
-		// JSONHandler에서 읽은 JSON 객체 호출
+		// JSONHandler에서 읽은 JSON 포인터 그대로 가져옴, 이거 받는 함수만 따로 분리
 		const TSharedPtr<FJsonObject> ParsedData = JSONHandlerInstance->GetJsonObjectData(FilePath);
 
 		// 차트 유형 확인, 차트 유형은 나중에 enum으로 정리해둘 것
 		FString ChartType = ParsedData->GetStringField(TEXT("chartType"));
 
 		JSONString = SerializeJSONToString(ParsedData);
-
 
 		// 차트가 도형 차트일 경우
 		if (ChartType == "bar" || ChartType == "line" || ChartType == "pie")

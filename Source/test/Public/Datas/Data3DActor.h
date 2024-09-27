@@ -49,6 +49,10 @@ public:
 	void GenerateShapeChart(const FShapeChartData& CopiedData);
 
 	UFUNCTION(BlueprintCallable, Category = "Chart")
+	bool PrepareBarValues(const TArray<float>& ValueArray, float& AverageHeightResult, float& BarHeightScalerResult, int SplineLength, int MaxHeight);
+
+
+	UFUNCTION(BlueprintCallable, Category = "Chart")
 	void PlayChildrenAnimation();
 
 	UFUNCTION(BlueprintCallable, Category = "Chart")

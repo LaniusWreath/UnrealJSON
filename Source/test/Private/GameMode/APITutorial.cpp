@@ -58,7 +58,7 @@ void AAPITutorial::OnGetTimeResponse(FHttpRequestPtr Request, FHttpResponsePtr R
 		{
 			// This is where we put information on what to do with the data
 			TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&ResponseString);
-			FJsonSerializer::Serialize(JsonObject.ToSharedRef(), Writer);
+			FJsonSerializer::Serialize(JsonObject.ToSharedRef(), Writer);	// JsonObject는 포인터임. 신경써야 
 
 			//Parsing Json and Put into Variable
 			UKismetMathLibrary::DateTimeFromIsoString(*JsonObject->GetStringField("dateTime"), Time);

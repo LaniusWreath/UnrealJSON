@@ -93,47 +93,39 @@ void AData3DActor::Tick(float DeltaTime)
 }
 
 
-// 막대 차트 
+// 모양 차트 
 void AData3DActor::GenerateShapeChart(const FShapeChartData& CopiedData)
 {
 	UE_LOG(LogTemp, Log, TEXT("Data3DActor : Generating ShapeChart"));
 	ClearChildrenActors();
+	
+	TArray<float> ValueArray = CopiedData.Values;
+	int32 Numbers = ValueArray.Num();
 
-	// 바 타입 차트 생성
+	// 스플라인 총 길이
+	float SplineLength = SplineComponent->GetSplineLength();
+
+	// 차트 최대 높이
+	float MaxHeight = ArrowComponent->ArrowLength;
+
+	// 막대 사이 간격
+	float BarSpacing = SplineLength / (Numbers - 1);
+
+	// 바 타입 차트 생성 사전 준비
 	if (CopiedData.ChartType == "bar")
 	{
-		UE_LOG(LogTemp, Log, TEXT("Data3DActor : Generating Bar Chart"));
+		float AverageHeight=0;
+		float BarHeightScaler=0;
 
-		// Array 사이즈
-		int32 Numbers = CopiedData.Values.Num();
+		bool isPrepareDone = PrepareBarValues(ValueArray, AverageHeight, BarHeightScaler, SplineLength, MaxHeight);
 
-		// 스플라인 총 길이
-		float SplineLength = SplineComponent->GetSplineLength();
-
-		// 막대 사이 간격
-		float BarSpacing = SplineLength / (Numbers - 1);
-
-		// 차트 최대 높이
-		float MaxHeight = ArrowComponent->ArrowLength;
-
-		// 차트 평균
-		float sum = 0;
-		for (float value : CopiedData.Values)
+		if (!isPrepareDone)
 		{
-			sum += value;
-		}
-		float AverageHeight = sum/Numbers;
-		float BarHeightScaler = MaxHeight / (2 * AverageHeight);
-
-		// 로그 스케일링, 정규화 따로 파라미터 빼서 고를 수 있게 할 것
-		
-		if (ChildActorComponents.Num() > 0)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Child Actors Already Exist"));
+			UE_LOG(LogTemp, Log, TEXT("Data3DActor: Preparing Bar Values Failed"));
 			return;
 		}
 
-
+		// 바 차트 생성
 		for (int32 i = 0; i < Numbers; i++)
 		{
 			float CurrentValue = CopiedData.Values[i];
@@ -144,7 +136,7 @@ void AData3DActor::GenerateShapeChart(const FShapeChartData& CopiedData)
 			
 			FVector BarLocation = SplineComponent->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::Local);	
 
-			// 자손 액터(차트 액터) 넣을 변수 생성
+			// 자손 액터(차트 액터) 넣을 UChildActorComponent* 반복 생성
 			UChildActorComponent* NewChildActorComponent = NewObject<UChildActorComponent>(this);
 			NewChildActorComponent->SetupAttachment(RootComponent);
 
@@ -152,7 +144,7 @@ void AData3DActor::GenerateShapeChart(const FShapeChartData& CopiedData)
 			{
 				UE_LOG(LogTemp, Log, TEXT("Data3DActor : Creating Bar Child Object : %s"), *NewChildActorComponent->GetName());
 
-				// 부모에 attach
+				// 자손 컴포넌트 부착
 				NewChildActorComponent->SetupAttachment(RootComponent);
 
 				//자손 액터 클래스 설정
@@ -190,6 +182,36 @@ void AData3DActor::GenerateShapeChart(const FShapeChartData& CopiedData)
 		}
 	}
 }
+// PreperateBar(ValueArray, &AverageHeight, &BarHeightScaler, SplineLength, MaxHeight);
+bool AData3DActor::PrepareBarValues(const TArray<float>& ValueArray, float& AverageHeightResult, float&BarHeightScalerResult , int SplineLength, int MaxHeight)
+{
+	UE_LOG(LogTemp, Log, TEXT("Data3DActor : Preperating Bar Chart"));
+
+	int32 Numbers = ValueArray.Num();
+
+	// 차트 평균
+	float sum = 0;
+	for (float value : ValueArray)
+	{
+		sum += value;
+	}
+	AverageHeightResult = sum / Numbers;
+
+	// 스케일 결정 코드 수정되어야
+	BarHeightScalerResult = MaxHeight / (2 * AverageHeightResult);
+
+	// 로그 스케일링, 정규화 따로 파라미터 빼서 고를 수 있게 할 것
+
+	if (ChildActorComponents.Num() > 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Child Actors Already Exist"));
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
 
 void AData3DActor::PlayChildrenAnimation()
 {
@@ -201,7 +223,7 @@ void AData3DActor::PlayChildrenAnimation()
 		case None:
 			break;
 		case BAR:
-			for (UChildActorComponent* ChildActorComponent : ChildActorComponents)
+			for (const UChildActorComponent* ChildActorComponent : ChildActorComponents)
 			{
 				if (ChildActorComponent && ChildActorComponent->GetChildActor())
 				{

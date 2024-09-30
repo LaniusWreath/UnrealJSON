@@ -33,7 +33,7 @@ public:
 	UCurveFloat* AnimationCurve;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chart")
-	UTextRenderComponent* TextRenderComponent;
+	UTextRenderComponent* TextRenderComponentValue;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
 	FColor Color;

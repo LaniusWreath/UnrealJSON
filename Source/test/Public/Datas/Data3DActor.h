@@ -17,7 +17,6 @@ UCLASS(Blueprintable)
 class TEST_API AData3DActor : public AActor
 {
 	GENERATED_BODY()
-	
 
 public:	
 	AData3DActor();
@@ -70,9 +69,6 @@ public:
 
 	UFUNCTION(CallInEditor, Category = "Chart")
 	void UpdateInEditor();
-
-
-
 
 	//virtual void OnConstruction(const FTransform& Transform) override;
 

@@ -58,7 +58,6 @@ void AData3DActor::BeginPlay()
 
 	InitilizeDataManager();
 	ClearChildrenActors();
-
 }
 
 
@@ -66,7 +65,7 @@ void AData3DActor::InitilizeDataManager()
 {
 	// Connect to GameInstance and Get DataManager Reference
 	UDataManageGameInstance* GameInstance = Cast<UDataManageGameInstance>(UGameplayStatics::GetGameInstance(this));
-	if (GameInstance && GameInstance->DataManager)
+	if (GameInstance)
 	{
 		DataManagerPtr = GameInstance->GetDataManager();
 		if (DataManagerPtr)
@@ -213,8 +212,10 @@ bool AData3DActor::GenerateBar(const TArray<float>& ValueArray, const TArray<FSt
 				
 				// 바 프로시저럴 메쉬 생성
 				ChildBar->CreateBarMesh(ScaledHeight);
-				// 바 텍스트 메쉬 생성
-				ChildBar->CreateTextMeshLabel(LabelName, ScaledHeight, FColor::Black); //여기부터 하면 됨
+				// 바 라벨 텍스트 렌더러 생성
+				ChildBar->CreateTextMeshLabel(LabelName, FColor::Black); //여기부터 하면 됨
+				// 바 값 텍스트 렌더러 생성
+				ChildBar->CreateTextMeshValue(CurrentValue, ScaledHeight, FColor::Black);
 
 				//ChildBar->PlayBarAnimation();
 

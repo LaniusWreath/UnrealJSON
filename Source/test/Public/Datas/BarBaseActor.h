@@ -35,6 +35,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chart")
 	UTextRenderComponent* TextRenderComponentValue;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chart")
+	UTextRenderComponent* TextRenderComponentLabel;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
 	FColor Color;
 
@@ -62,10 +65,10 @@ public:
 	void CreateBarMesh(float BarHeight);
 
 	UFUNCTION(BlueprintCallable, Category = " Chart")
-	void CreateTextMeshLabel(const FString& LabelName, const float& BarHeight, FColor TextColor, float TextSize = 10);
+	void CreateTextMeshLabel(const FString& LabelName, FColor TextColor, float TextSize = 1);
 
 	UFUNCTION(BlueprintCallable, Category = " Chart")
-	void CreateTextMeshValue (const float& FloatValue, const float& BarHeight, FColor TextColor);
+	void CreateTextMeshValue(const float& FloatValue, const float& BarHeight, FColor TextColor, float TextSize = 1);
 
 //#if WITH_EDITOR
 //	// 에디터에서 프로퍼티가 변경될 때 호출되는 함수, AActor에서 상속

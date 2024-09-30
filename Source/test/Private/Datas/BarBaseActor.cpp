@@ -26,7 +26,7 @@ ABarBaseActor::ABarBaseActor()
 	//PrimaryActorTick.bTickEvenWhenPaused = true;
 
 	// 텍스트 렌더러 - 값
-	TextRenderComponentValue = CreateDefaultSubobject<UTextRenderComponent>(TEXT("TextRenderComponent"));
+	TextRenderComponentValue = CreateDefaultSubobject<UTextRenderComponent>(TEXT("TextRenderComponentValue"));
 	TextRenderComponentValue->SetupAttachment(RootComponent);
 
 	// 텍스트 피벗을 가운데로 설정
@@ -36,6 +36,15 @@ ABarBaseActor::ABarBaseActor()
 	// 텍스트의 위치를 부모의 위치로 설정
 	TextRenderComponentValue->SetRelativeLocation(FVector::ZeroVector);
 	
+	// 텍스트 렌더러 - 라벨
+	TextRenderComponentLabel = CreateDefaultSubobject<UTextRenderComponent>(TEXT("TextRenderComponentLabel")); 
+	TextRenderComponentLabel->SetupAttachment(RootComponent);
+
+	TextRenderComponentLabel->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
+	TextRenderComponentLabel->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
+
+	TextRenderComponentLabel->SetRelativeLocation(FVector::ZeroVector);
+
 }
 
 // Called when the game starts or when spawned
@@ -115,23 +124,34 @@ void ABarBaseActor::CreateBarMesh(float BarHeight)
 	}
 }
 
-void ABarBaseActor::CreateTextMeshLabel(const FString& LabelName, const float& BarHeight, FColor TextColor, const float TextSize)
+void ABarBaseActor::CreateTextMeshLabel(const FString& LabelName, FColor TextColor, const float TextSize)
 {
 	int Padding = 10;
 
-	// 텍스트 설정
-	TextRenderComponentValue->SetText(FText::FromString(LabelName));
+	// 텍스트 내용
+	TextRenderComponentLabel->SetText(FText::FromString(LabelName));
 
-	// 텍스트 색상 설정 (옵션)
-	TextRenderComponentValue->SetTextRenderColor(TextColor);
+	// 텍스트 색상 
+	TextRenderComponentLabel->SetTextRenderColor(TextColor);
 
-	// 텍스트 크기 및 위치 설정 (옵션)
-	TextRenderComponentValue->SetWorldSize(TextSize);
-	TextRenderComponentValue->SetRelativeLocation(FVector(0.f, 0.f, BarHeight + Padding));
+	// 텍스트 크기 및 위치
+	TextRenderComponentLabel->SetWorldSize(TextSize);
+	TextRenderComponentLabel->SetRelativeLocation(FVector(0.f, Padding, 0.f));
 }
 
-void ABarBaseActor::CreateTextMeshValue(const float& FloatValue, const float& BarHeight, FColor TextColor)
+void ABarBaseActor::CreateTextMeshValue(const float& FloatValue, const float& BarHeight, FColor TextColor, const float TextSize)
 {
+	int padding = 10;
+	
+	// 텍스트 내용
+	TextRenderComponentValue->SetText(FText::AsNumber(FloatValue));
+
+	// 텍스트 색상
+	TextRenderComponentLabel->SetTextRenderColor(TextColor);
+
+	// 텍스트 크기 및 위치
+	TextRenderComponentLabel->SetWorldSize(TextSize);
+	TextRenderComponentLabel->SetRelativeLocation(FVector(0.f, 0.f, BarHeight+padding));
 }
 
 // 애니메이션 실행 제어

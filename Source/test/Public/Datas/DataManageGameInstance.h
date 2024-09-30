@@ -13,13 +13,16 @@ class TEST_API UDataManageGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 
-public:
-	UPROPERTY(BlueprintReadOnly, Category = "Data Managerment")
+private:
+	UPROPERTY()
 	UDataManager* DataManager;
+
+public:
 
 	virtual void Init() override;
 
 	UFUNCTION(BlueprintCallable, Category = "Data Management")
 	UDataManager* GetDataManager() const;
+
 
 };

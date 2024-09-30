@@ -100,6 +100,7 @@ void AData3DActor::CreateShapeChart(const FShapeChartData& CopiedData)
 	ClearChildrenActors();
 	
 	TArray<float> ValueArray = CopiedData.Values;
+	TArray<FString> LabelAarray = CopiedData.Labels;
 	int32 Numbers = ValueArray.Num();
 
 	// 스플라인 총 길이
@@ -125,7 +126,7 @@ void AData3DActor::CreateShapeChart(const FShapeChartData& CopiedData)
 			return;
 		}
 
-		bool isGenerateDone = GenerateBar(ValueArray, BarSpacing, AverageHeight, BarHeightScaler);
+		bool isGenerateDone = GenerateBar(ValueArray, LabelAarray ,BarSpacing, AverageHeight, BarHeightScaler);
 		if (!isGenerateDone)
 		{
 			UE_LOG(LogTemp, Log, TEXT("Data3DActor : Generating Bar Failed"));
@@ -134,7 +135,7 @@ void AData3DActor::CreateShapeChart(const FShapeChartData& CopiedData)
 		
 	}
 }
-// 막대 그래프 사전 준비 함수 : 막대 그래프의 데이터, 값을 넣을 평균 값, 값을 넣을 가중치값 스플라인 길이, 최고 높이)
+// 막대 그래프 사전 준비 함수 : 막대 그래프의 데이터, 막대 그래프 라벨 ,값을 넣을 평균 값, 값을 넣을 가중치값 스플라인 길이, 최고 높이)
 bool AData3DActor::PrepareBarValues(const TArray<float>& ValueArray, float& AverageHeightResult, float&BarHeightScalerResult , int SplineLength, int MaxHeight)
 {
 	UE_LOG(LogTemp, Log, TEXT("Data3DActor : Preperating Bar Chart"));
@@ -179,6 +180,8 @@ bool AData3DActor::GenerateBar(const TArray<float>& ValueArray, const TArray<FSt
 		float Distance = i * BarSpacing;
 
 		FVector BarLocation = SplineComponent->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::Local);
+		
+		FString LabelName = LabelArray[i];
 
 		// 자손 액터(차트 액터) 넣을 UChildActorComponent* 반복 생성
 		UChildActorComponent* NewChildActorComponent = NewObject<UChildActorComponent>(this);
@@ -211,7 +214,7 @@ bool AData3DActor::GenerateBar(const TArray<float>& ValueArray, const TArray<FSt
 				// 바 프로시저럴 메쉬 생성
 				ChildBar->CreateBarMesh(ScaledHeight);
 				// 바 텍스트 메쉬 생성
-				ChildBar->CreateTextMesh(); //여기부터 하면 됨
+				ChildBar->CreateTextMeshLabel(LabelName, ScaledHeight, FColor::Black); //여기부터 하면 됨
 
 				//ChildBar->PlayBarAnimation();
 

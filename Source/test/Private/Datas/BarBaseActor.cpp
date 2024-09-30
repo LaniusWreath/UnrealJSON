@@ -25,8 +25,16 @@ ABarBaseActor::ABarBaseActor()
 	//PrimaryActorTick.bStartWithTickEnabled = true;
 	//PrimaryActorTick.bTickEvenWhenPaused = true;
 
+	// 텍스트 렌더러 - 값
 	TextRenderComponent = CreateDefaultSubobject<UTextRenderComponent>(TEXT("TextRenderComponent"));
 	TextRenderComponent->SetupAttachment(RootComponent);
+
+	// 텍스트 피벗을 가운데로 설정
+	TextRenderComponent->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
+	TextRenderComponent->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
+
+	// 텍스트의 위치를 부모의 위치로 설정
+	TextRenderComponent->SetRelativeLocation(FVector::ZeroVector);
 	
 }
 
@@ -107,19 +115,23 @@ void ABarBaseActor::CreateBarMesh(float BarHeight)
 	}
 }
 
-void ABarBaseActor::CreateTextMesh(const FString& LabelName, const float& BarHeight, FColor& Color)
+void ABarBaseActor::CreateTextMeshLabel(const FString& LabelName, const float& BarHeight, FColor TextColor, const float TextSize)
 {
-	int Padding = 20;
+	int Padding = 10;
 
 	// 텍스트 설정
 	TextRenderComponent->SetText(FText::FromString(LabelName));
 
 	// 텍스트 색상 설정 (옵션)
-	TextRenderComponent->SetTextRenderColor(Color);
+	TextRenderComponent->SetTextRenderColor(TextColor);
 
 	// 텍스트 크기 및 위치 설정 (옵션)
-	TextRenderComponent->SetWorldSize(100.f);
+	TextRenderComponent->SetWorldSize(TextSize);
 	TextRenderComponent->SetRelativeLocation(FVector(0.f, 0.f, BarHeight + Padding));
+}
+
+void ABarBaseActor::CreateTextMeshValue(const float& FloatValue, const float& BarHeight, FColor TextColor)
+{
 }
 
 // 애니메이션 실행 제어

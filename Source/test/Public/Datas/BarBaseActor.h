@@ -62,7 +62,10 @@ public:
 	void CreateBarMesh(float BarHeight);
 
 	UFUNCTION(BlueprintCallable, Category = " Chart")
-	void CreateTextMesh(const FString& LabelName, const float& BarHeight, FColor& Color);
+	void CreateTextMeshLabel(const FString& LabelName, const float& BarHeight, FColor TextColor, float TextSize = 10);
+
+	UFUNCTION(BlueprintCallable, Category = " Chart")
+	void CreateTextMeshValue (const float& FloatValue, const float& BarHeight, FColor TextColor);
 
 //#if WITH_EDITOR
 //	// 에디터에서 프로퍼티가 변경될 때 호출되는 함수, AActor에서 상속

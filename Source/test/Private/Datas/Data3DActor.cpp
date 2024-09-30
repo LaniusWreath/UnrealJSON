@@ -65,7 +65,7 @@ void AData3DActor::InitilizeDataManager()
 {
 	// Connect to GameInstance and Get DataManager Reference
 	UDataManageGameInstance* GameInstance = Cast<UDataManageGameInstance>(UGameplayStatics::GetGameInstance(this));
-	if (GameInstance)
+	if (GameInstance && GameInstance->GetDataManager())
 	{
 		DataManagerPtr = GameInstance->GetDataManager();
 		if (DataManagerPtr)
@@ -202,32 +202,35 @@ bool AData3DActor::GenerateBar(const TArray<float>& ValueArray, const TArray<FSt
 			// 배열에 추가
 			ChildActorComponents.Add(NewChildActorComponent);
 
-			// ABarBaseAcotr로 UChildActorComponent 캐스팅
-			ABarBaseActor* ChildBar = Cast<ABarBaseActor>(NewChildActorComponent->GetChildActor());
-
-			
-			if (ChildBar)
+			if (NewChildActorComponent->GetChildActor())
 			{
-				//UE_LOG(LogTemp, Log, TEXT("Data3DActor : ChildBP : %s"), *ChildBar->AnimationCurve->GetName());
-				
-				// 바 프로시저럴 메쉬 생성
-				ChildBar->CreateBarMesh(ScaledHeight);
-				// 바 라벨 텍스트 렌더러 생성
-				ChildBar->CreateTextMeshLabel(LabelName, FColor::Black); //여기부터 하면 됨
-				// 바 값 텍스트 렌더러 생성
-				ChildBar->CreateTextMeshValue(CurrentValue, ScaledHeight, FColor::Black);
+				// ABarBaseAcotr로 UChildActorComponent 캐스팅
+				ABarBaseActor* ChildBar = Cast<ABarBaseActor>(NewChildActorComponent->GetChildActor());
+				if (ChildBar)
+				{
+					//UE_LOG(LogTemp, Log, TEXT("Data3DActor : ChildBP : %s"), *ChildBar->AnimationCurve->GetName());
 
-				//ChildBar->PlayBarAnimation();
+					// 바 프로시저럴 메쉬 생성
+					ChildBar->CreateBarMesh(ScaledHeight);
+					// 바 라벨 텍스트 렌더러 생성
+					ChildBar->CreateTextMeshLabel(LabelName); //여기부터 하면 됨
+					// 바 값 텍스트 렌더러 생성
+					ChildBar->CreateTextMeshValue(CurrentValue, ScaledHeight);
+					// 이동
+					ChildBar->SetActorRelativeLocation(BarLocation);
 
-				// 이동
-				ChildBar->SetActorRelativeLocation(BarLocation);
-
+				}
+				else
+				{
+					UE_LOG(LogTemp, Error, TEXT("Data3DActor : Failed Casting ChildBarBaseActor"));
+					return false;
+				}
 			}
 			else
 			{
-				UE_LOG(LogTemp, Error, TEXT("Data3DActor : Failed Casting ChildBarBaseActor"));
-				return false;
+				UE_LOG(LogTemp, Error, TEXT("Data3DActor : Failed NewChildActorComponent->GetChildActor() "));
 			}
+			
 		}
 
 		UE_LOG(LogTemp, Log, TEXT("Data3DActor : Created bar Number with Height: %f"),ScaledHeight);

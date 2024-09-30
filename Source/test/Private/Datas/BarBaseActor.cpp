@@ -34,7 +34,9 @@ ABarBaseActor::ABarBaseActor()
 	TextRenderComponentValue->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
 
 	// 텍스트의 위치를 부모의 위치로 설정
-	TextRenderComponentValue->SetRelativeLocation(FVector::ZeroVector);
+	//TextRenderComponentValue->SetRelativeLocation(FVector::ZeroVector);
+	TextRenderComponentValue->SetRelativeRotation(FRotator(0, 90, 0));
+
 	
 	// 텍스트 렌더러 - 라벨
 	TextRenderComponentLabel = CreateDefaultSubobject<UTextRenderComponent>(TEXT("TextRenderComponentLabel")); 
@@ -42,8 +44,10 @@ ABarBaseActor::ABarBaseActor()
 
 	TextRenderComponentLabel->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
 	TextRenderComponentLabel->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
-
-	TextRenderComponentLabel->SetRelativeLocation(FVector::ZeroVector);
+	TextRenderComponentLabel->SetRelativeRotation(FRotator(0, 90, 0));
+	// 텍스트 렌더러가 메쉬에서 얼마나 떨어져있는지, 일단 하드코딩, 나중에 수정할 것
+	//TextRenderComponentLabel->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
+	//TextRenderComponentLabel->SetRelativeLocation(FVector::ZeroVector);
 
 }
 
@@ -63,18 +67,19 @@ void ABarBaseActor::CreateBarMesh(float BarHeight)
 	TArray<FProcMeshTangent> Tangents;
 	
 	float BarWidth = Width_bar;
+	float w = Width_bar / 2;
 
 	UE_LOG(LogTemp, Log, TEXT("BarBaseActor : CreateBarMesh : BarHeight= %f, BarWidth : %f"), BarHeight, BarWidth);
 
 	// 버텍스
-	Vertices.Add(FVector(0, 0, 0));
-	Vertices.Add(FVector(BarWidth, 0, 0));
-	Vertices.Add(FVector(BarWidth, BarWidth, 0));
-	Vertices.Add(FVector(0, BarWidth, 0));
-	Vertices.Add(FVector(0, 0, BarHeight));
-	Vertices.Add(FVector(BarWidth, 0, BarHeight));
-	Vertices.Add(FVector(BarWidth, BarWidth, BarHeight));
-	Vertices.Add(FVector(0, BarWidth, BarHeight));
+	Vertices.Add(FVector(-w, -w, 0));
+	Vertices.Add(FVector(w, -w, 0));
+	Vertices.Add(FVector(w, w, 0));
+	Vertices.Add(FVector(-w, w, 0));
+	Vertices.Add(FVector(-w, -w, BarHeight));
+	Vertices.Add(FVector(w, -w, BarHeight));
+	Vertices.Add(FVector(w, w, BarHeight));
+	Vertices.Add(FVector(-w, w, BarHeight));
 
 	// 트라이앵글
 	Triangles.Append({ 0,1,2,0,2,3 });	// 밑면
@@ -124,9 +129,10 @@ void ABarBaseActor::CreateBarMesh(float BarHeight)
 	}
 }
 
-void ABarBaseActor::CreateTextMeshLabel(const FString& LabelName, FColor TextColor, const float TextSize)
+// 라벨 텍스트 렌더러 설정
+void ABarBaseActor::CreateTextMeshLabel(const FString& LabelName)
 {
-	int Padding = 10;
+	int padding = 10;
 
 	// 텍스트 내용
 	TextRenderComponentLabel->SetText(FText::FromString(LabelName));
@@ -134,12 +140,16 @@ void ABarBaseActor::CreateTextMeshLabel(const FString& LabelName, FColor TextCol
 	// 텍스트 색상 
 	TextRenderComponentLabel->SetTextRenderColor(TextColor);
 
-	// 텍스트 크기 및 위치
-	TextRenderComponentLabel->SetWorldSize(TextSize);
-	TextRenderComponentLabel->SetRelativeLocation(FVector(0.f, Padding, 0.f));
+	// 텍스트 크기
+	TextRenderComponentLabel->SetWorldSize(TextSizeUnit);
+
+	// 위치 
+	TextRenderComponentLabel->SetRelativeLocation(FVector(0.f, 0.f,-padding));
+
 }
 
-void ABarBaseActor::CreateTextMeshValue(const float& FloatValue, const float& BarHeight, FColor TextColor, const float TextSize)
+// 값 텍스트 렌더러 설정
+void ABarBaseActor::CreateTextMeshValue(const float& FloatValue, const float& BarHeight)
 {
 	int padding = 10;
 	
@@ -147,11 +157,13 @@ void ABarBaseActor::CreateTextMeshValue(const float& FloatValue, const float& Ba
 	TextRenderComponentValue->SetText(FText::AsNumber(FloatValue));
 
 	// 텍스트 색상
-	TextRenderComponentLabel->SetTextRenderColor(TextColor);
+	TextRenderComponentValue->SetTextRenderColor(TextColor);
 
-	// 텍스트 크기 및 위치
-	TextRenderComponentLabel->SetWorldSize(TextSize);
-	TextRenderComponentLabel->SetRelativeLocation(FVector(0.f, 0.f, BarHeight+padding));
+	// 텍스트 크기
+	TextRenderComponentValue->SetWorldSize(TextSizeUnit);
+
+	// 위치
+	TextRenderComponentValue->SetRelativeLocation(FVector(0.f, 0.f, BarHeight+padding));
 }
 
 // 애니메이션 실행 제어

@@ -42,8 +42,13 @@ public:
 	FColor Color;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
+	FColor TextColor = FColor::Blue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
 	float Width_bar = 10.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
+	float TextSizeUnit = 100;
 
 protected:
 	// Called when the game starts or when spawned
@@ -65,10 +70,10 @@ public:
 	void CreateBarMesh(float BarHeight);
 
 	UFUNCTION(BlueprintCallable, Category = " Chart")
-	void CreateTextMeshLabel(const FString& LabelName, FColor TextColor, float TextSize = 1);
+	void CreateTextMeshLabel(const FString& LabelName);
 
 	UFUNCTION(BlueprintCallable, Category = " Chart")
-	void CreateTextMeshValue(const float& FloatValue, const float& BarHeight, FColor TextColor, float TextSize = 1);
+	void CreateTextMeshValue(const float& FloatValue, const float& BarHeight);
 
 //#if WITH_EDITOR
 //	// 에디터에서 프로퍼티가 변경될 때 호출되는 함수, AActor에서 상속

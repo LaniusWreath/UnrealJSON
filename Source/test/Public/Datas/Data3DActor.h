@@ -54,7 +54,7 @@ public:
 	bool GenerateBar(const TArray<float>& ValueArray, const TArray<FString>& LabelArray, const int BarSpacing, const float AverageHeight, const float BarHeightScaler);
 
 	UFUNCTION(BlueprintCallable, Category = "Chart")
-	void PlayChildrenAnimation();
+	void PlayLastChildrenAnimation();
 
 	UFUNCTION(BlueprintCallable, Category = "Chart")
 	void ClearChildrenActors();
@@ -65,6 +65,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
 	FShapeChartData TestShapeData;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FString CurrentChartType;
 
 
 	UFUNCTION(CallInEditor, Category = "Chart")

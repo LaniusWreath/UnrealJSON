@@ -3,14 +3,15 @@
 
 #include "Datas/DataTypes.h"
 
-TMap<FString, int32> DataTypes::MapChartTypes = 
+// TEXT 또는 String을 Enum에 매핑하기 위한 TMap
+TMap<FString, EChartTypes> DataTypes::MapChartTypes = 
 {
-	{TEXT("BAR"), 1},
-	{TEXT("LINE"), 2},
-	{TEXT("PIE"), 3},
-	{TEXT("XY"), 4},
-	{TEXT("XYZ"), 5},
-	{TEXT("FREE"), 6}
+	{TEXT("BAR"), EChartTypes::BAR},
+	{TEXT("LINE"), EChartTypes::LINE},
+	{TEXT("PIE"), EChartTypes::PIE},
+	{TEXT("XY"), EChartTypes::XY},
+	{TEXT("XYZ"), EChartTypes::XYZ},
+	{TEXT("FREE"), EChartTypes::FREE}
 };
 
 DataTypes::DataTypes()

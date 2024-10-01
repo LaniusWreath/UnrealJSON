@@ -25,16 +25,6 @@ AData3DActor::AData3DActor()
 	ArrowComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent"));
 	ArrowComponent->SetupAttachment(RootComponent);
 	ArrowComponent->SetRelativeRotation(FRotator(90.f, 0.f, 0.f));
-
-	
-	// 에디터에서 다시 설정할 것
-	//static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Engine/BasicShapes/Cube"));
-	//if (MeshAsset.Succeeded())
-	//{
-	//	BaseMesh->SetStaticMesh(MeshAsset.Object);
-	//	// 메시 모빌리티
-	//	BaseMesh->SetMobility(EComponentMobility::Movable);
-	//}
 }
 
 
@@ -101,6 +91,7 @@ void AData3DActor::CreateShapeChart(const FShapeChartData& CopiedData)
 	TArray<float> ValueArray = CopiedData.Values;
 	TArray<FString> LabelAarray = CopiedData.Labels;
 	int32 Numbers = ValueArray.Num();
+	CurrentChartType = CopiedData.ChartType;
 
 	// 스플라인 총 길이
 	float SplineLength = SplineComponent->GetSplineLength();
@@ -108,11 +99,11 @@ void AData3DActor::CreateShapeChart(const FShapeChartData& CopiedData)
 	// 차트 최대 높이
 	float MaxHeight = ArrowComponent->ArrowLength;
 
-	// 막대 사이 간격
-	float BarSpacing = SplineLength / (Numbers - 1);
+	// 스플라인 사이 간격
+	float SplineSpacing = SplineLength / (Numbers - 1);
 
 	// 바 타입 차트 생성 사전 준비
-	if (CopiedData.ChartType == "bar")
+	if (CurrentChartType == "bar")
 	{
 		float AverageHeight=0;
 		float BarHeightScaler=0;
@@ -125,13 +116,12 @@ void AData3DActor::CreateShapeChart(const FShapeChartData& CopiedData)
 			return;
 		}
 
-		bool isGenerateDone = GenerateBar(ValueArray, LabelAarray ,BarSpacing, AverageHeight, BarHeightScaler);
+		bool isGenerateDone = GenerateBar(ValueArray, LabelAarray ,SplineSpacing, AverageHeight, BarHeightScaler);
 		if (!isGenerateDone)
 		{
 			UE_LOG(LogTemp, Log, TEXT("Data3DActor : Generating Bar Failed"));
 			return;
 		}
-		
 	}
 }
 // 막대 그래프 사전 준비 함수 : 막대 그래프의 데이터, 막대 그래프 라벨 ,값을 넣을 평균 값, 값을 넣을 가중치값 스플라인 길이, 최고 높이)
@@ -238,7 +228,9 @@ bool AData3DActor::GenerateBar(const TArray<float>& ValueArray, const TArray<FSt
 	return true;
 }
 
-void AData3DActor::PlayChildrenAnimation()
+
+// 여기 last로 말고, 멤버변수 charttype으로 바꾸는것부터 시작
+void AData3DActor::PlayLastChildrenAnimation()
 {
 	if (DataManagerPtr)
 	{
@@ -270,9 +262,7 @@ void AData3DActor::PlayChildrenAnimation()
 		default:
 			break;
 		}
-			
 	}
-	
 }
 
 // Base에 붙은 액터 삭제
@@ -300,14 +290,15 @@ void AData3DActor::GetDataAndCreateChart()
 {
 	if (DataManagerPtr)
 	{
-		EChartTypes LastType = DataManagerPtr->LastChartType;
+		UDataClasses* ptr = DataManagerPtr->GetLastChartDataClassInstancePtr();
+		EChartTypes LastType = EChartTypes::None;
 		UE_LOG(LogTemp, Log, TEXT("Data3DActor : LastChartType is %d"), LastType)
 		switch (LastType)
 		{
 		case None:
 			break;
 		case BAR:
-			CreateShapeChart(DataManagerPtr->ShapeChartData);
+			//CreateShapeChart(DataManagerPtr->ShapeChartData);
 			break;
 		case LINE:
 			break;

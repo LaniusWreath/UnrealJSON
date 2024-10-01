@@ -26,8 +26,6 @@ struct FShapeChartData
 	// y축 값 또는 pie 차트 비율
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TArray<float> Values = { 20.5, 21.0, 19.8, 22.1 };
-
-
 };
 
 USTRUCT(BlueprintType)
@@ -78,7 +76,7 @@ public:
 	DataTypes();
 
 	UPROPERTY(VisibleAnywhere)
-	static TMap<FString, int32> MapChartTypes ;
+	static TMap<FString, EChartTypes> MapChartTypes ;
 
 	~DataTypes();
 };

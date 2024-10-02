@@ -14,6 +14,7 @@ UCLASS()
 class TEST_API UDataClasses : public UObject
 {
 	GENERATED_BODY()
+
 private:
 	EChartTypes ChartType = EChartTypes::None;
 
@@ -42,7 +43,6 @@ private:
 	}
 
 public:
-
 	virtual bool SetChartData(const FString& ChartTypeName, const FString& XName, const TArray<FString>& Labels, const FString& YName, const TArray<float>& Values);
 	UFUNCTION(BlueprintCallable, Category = "Chart")
 	virtual bool SetChartData(const FShapeChartData& InputData);
@@ -64,29 +64,25 @@ class UShapeChartBarClass : public UShapeChartClass
 private:
 	void ProcessData() override {};
 
-protected:
-	// 이 형태로 다른 자식 클래스도 함수 오버라이딩 수정할것
-	void Initialize(EChartTypes Type) override { Super::Initialize(EChartTypes::BAR); }
-
-
 public:
-	bool SetChartData(const FShapeChartData& InputData) override;
-	bool SetChartData(const FString& ChartTypeName, const FString& XName, const TArray<FString>& Labels, const FString& YName, const TArray<float>& Values) override;
+	// 이 형태로 다른 자식 클래스도 함수 오버라이딩 수정할것
+	virtual void Initialize(EChartTypes Type) override { Super::Initialize(EChartTypes::BAR); }
+	virtual bool SetChartData(const FShapeChartData& InputData) override;
+	virtual bool SetChartData(const FString& ChartTypeName, const FString& XName, const TArray<FString>& Labels, 
+		const FString& YName, const TArray<float>& Values) override;
 };
 
 UCLASS()
 class UShapeChartLineClass : public UShapeChartClass
 {
 	GENERATED_BODY()
+	
 
 private:
 	void ProcessData() override {};
-	void Initialize(EChartTypes Type) override
-	{
-		ChartType = EChartTypes::LINE;
-	}
 
 public:
+	virtual void Initialize(EChartTypes Type) override { Super::Initialize(EChartTypes::LINE); }
 };
 
 UCLASS()
@@ -96,12 +92,9 @@ class UShapeChartPieClass : public UShapeChartClass
 
 private:
 	void ProcessData() override {};
-	void Initialize(EChartTypes Type) override
-	{
-		ChartType = EChartTypes::PIE;
-	}
 
 public:
+	virtual void Initialize(EChartTypes Type) override { Super::Initialize(EChartTypes::PIE); }
 };
 
 
@@ -117,7 +110,9 @@ private:
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Processing XY Chart Data"));
 	}
+
 public:
+	virtual void Initialize(EChartTypes Type) override { Super::Initialize(EChartTypes::XY); }
 	virtual bool SetChartData(const FString& XName, const TArray<float>& XData, const FString& YName, const TArray<float>& YData);
 	UFUNCTION(BlueprintCallable, Category = "Chart")
 	virtual bool SetChartData(const FXYChartData& InputData);
@@ -137,6 +132,7 @@ private:
 	}
 
 public:
+	virtual void Initialize(EChartTypes Type) override { Super::Initialize(EChartTypes::XYZ); }
 	virtual bool SetChartData(const TArray<FString>& LabelNames, const TArray<FVector>& VectorValues);
 	UFUNCTION(BlueprintCallable, Category = "Chart")
 	virtual bool SetChartData(const FXYZChartData& InputData);

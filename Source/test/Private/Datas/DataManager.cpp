@@ -141,6 +141,7 @@ void UDataManager::FetchDataFromHTTP(const FString& URL)
 {
 }
 
+// 데이터 큐 맨 앞 pop
 UDataClasses* UDataManager::GetLastChartDataClassInstancePtr()
 {
 	if (ChartDataClassInstanceQueue.Num() > 0)
@@ -184,9 +185,9 @@ FString UDataManager::SerializeJSONToString(const TSharedPtr<FJsonObject> JSONOb
 	return JsonString;
 }
 
+// 데이터 입력 받아 DataClass 객체 생성 
 void UDataManager::InstancingDataClass(TSharedPtr<FJsonObject>& Data)
 {
-
 	FString ChartType = Data->GetStringField(TEXT("chartType"));
 	int32 ChartTypeNumber = DataTypes::MapChartTypes[ChartType.ToUpper()];
 	EChartTypes CurChartTypeEnum = DataTypes::MapChartTypes[ChartType];

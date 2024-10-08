@@ -42,11 +42,12 @@ void UChartGenerator::ClearChildrenActors()
 
 UBarGenerator::UBarGenerator()
 {
+
 	SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("SplineComponent"));
-	SplineComponent->SetupAttachment(this);
+	SplineComponent->SetupAttachment(RootMeshComponent);
 
 	ArrowComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent"));
-	ArrowComponent->SetupAttachment(this);
+	ArrowComponent->SetupAttachment(RootMeshComponent);
 	ArrowComponent->SetRelativeRotation(FRotator(90.f, 0.f, 0.f));
 	
 }

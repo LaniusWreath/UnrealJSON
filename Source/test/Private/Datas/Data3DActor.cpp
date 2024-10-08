@@ -156,14 +156,19 @@ void AData3DActor::Tick(float DeltaTime)
 
 AData3DActorBar::AData3DActorBar()
 {
+
 	BarGeneratorComponent = CreateDefaultSubobject<UBarGenerator>(TEXT("barGeneratorComponent"));
 	BarGeneratorComponent->SetupAttachment(RootComponent);
 
-	static ConstructorHelpers::FClassFinder<ABarBaseActor> ActorClassFinder(TEXT("Content/Data/BP_BarBaseActor01.uasset"));
+	static ConstructorHelpers::FClassFinder<ABarBaseActor> ActorClassFinder(TEXT("Data/BP_BarBaseActor01.uasset"));
 	if (ActorClassFinder.Succeeded())
 	{
 		UE_LOG(LogTemp, Log, TEXT("Default Bar Source Blueprint set "));
 		BarBaseActorBPClass = ActorClassFinder.Class;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Default Bar Source Blueprint set Failed"));
 	}
 }
 

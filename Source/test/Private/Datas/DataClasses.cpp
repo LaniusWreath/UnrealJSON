@@ -3,10 +3,24 @@
 
 #include "Datas/DataClasses.h"
 
+///////////////////////////////////////// 데이터 Get ////////////////////////////////////////////////
+
 const EChartTypes UDataClasses::GetChartType() const
 {
     return ChartType;
 }
+
+const TArray<float>& UShapeChartClass::GetShapeChartDataValues() const
+{
+    if (ShapeChartData.Values.Num() == 0)
+    {
+        UE_LOG(LogTemp, Log, TEXT("DataClass.cpp : %s Values is empty"), *this->GetName());
+    }
+    return ShapeChartData.Values;
+
+}
+
+///////////////////////////////////////// 데이터 Set ////////////////////////////////////////////////
 
 bool UShapeChartClass::SetChartData(const FString& ChartTypeName, const FString& XName, const TArray<FString>& Labels, const FString& YName, const TArray<float>& Values)
 {
@@ -60,15 +74,6 @@ bool UShapeChartClass::SetChartData(const FShapeChartData& InputData)
     return false;
 }
 
-const TArray<float>& UShapeChartClass::GetBarChartDataValues() const
-{
-    if (ShapeChartData.Values.Num() == 0)
-    {
-        UE_LOG(LogTemp, Log, TEXT("DataClass.cpp : %s Values is empty"), *this->GetName());
-    }
-    return ShapeChartData.Values;
-
-}
 
 bool UXYChartClass::SetChartData(const FXYChartData& InputData)
 {
@@ -111,3 +116,4 @@ bool UShapeChartBarClass::SetChartData(const FString& ChartTypeName, const FStri
 
     return result;
 }
+

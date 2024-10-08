@@ -7,39 +7,25 @@
 #include "Datas/DataManageGameInstance.h"
 #include "Datas/BarBaseActor.h"
 #include "Datas/DataManager.h"
+#include "Datas/ChartGenerator.h"
+#include "Datas/DataClasses.h"
 #include "Components/SplineComponent.h"
 #include "Components/ArrowComponent.h"
 
+/// <summary>
+/// BaseActor Functions
+/// </summary>
+
 AData3DActor::AData3DActor()
 {
-	UE_LOG(LogTemp, Log, TEXT("Data3DActor : Instancing %s"), *GetName());
+	UE_LOG(LogTemp, Log, TEXT("Data3DActor : Initializing %s"), *GetName());
 
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponet"));
 
 	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
 	BaseMesh->SetupAttachment(RootComponent);
 
-	SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("SplineComponent"));
-	SplineComponent->SetupAttachment(RootComponent);
-
-	ArrowComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent"));
-	ArrowComponent->SetupAttachment(RootComponent);
-	ArrowComponent->SetRelativeRotation(FRotator(90.f, 0.f, 0.f));
 }
-
-
-void AData3DActor::UpdateInEditor()
-{
-	UE_LOG(LogTemp, Log, TEXT("Data3DActor : Debuging Chart Instance : %s"), *GetName());
-	CreateShapeChart(TestShapeData);
-}
-
-//void AData3DActor::OnConstruction(const FTransform& Transform)
-//{
-//	Super::OnConstruction(Transform);
-//	
-//}
-
 
 // Called when the game starts or when spawned
 void AData3DActor::BeginPlay()
@@ -47,18 +33,15 @@ void AData3DActor::BeginPlay()
 	Super::BeginPlay();
 
 	InitilizeDataManager();
-	ClearChildrenActors();
 }
-
 
 void AData3DActor::InitilizeDataManager()
 {
-	// Connect to GameInstance and Get DataManager Reference
 	UDataManageGameInstance* GameInstance = Cast<UDataManageGameInstance>(UGameplayStatics::GetGameInstance(this));
 	if (GameInstance && GameInstance->GetDataManager())
 	{
-		DataManagerPtr = GameInstance->GetDataManager();
-		if (DataManagerPtr)
+		DataManagerReference = GameInstance->GetDataManager();
+		if (DataManagerReference)
 		{
 			UE_LOG(LogTemp, Log, TEXT("Data3DActor : DataManager has referenced well"));
 		}
@@ -73,7 +56,6 @@ void AData3DActor::InitilizeDataManager()
 	}
 }
 
-
 // Called every frame
 void AData3DActor::Tick(float DeltaTime)
 {
@@ -81,240 +63,167 @@ void AData3DActor::Tick(float DeltaTime)
 
 }
 
+// 애니메이션 수정할 것
+//void AData3DActor::PlayLastChildrenAnimation()
+//{
+//	if (DataManagerPtr)
+//	{
+//		UDataClasses* BaseClass = DataManagerPtr->GetLastChartDataClassInstancePtr();
+//		EChartTypes ECurrentChartType = BaseClass->GetChartType();
+//		UE_LOG(LogTemp, Log, TEXT("Data3DActor : LastChartType is %d"), ECurrentChartType);
+//
+//		switch (ECurrentChartType)
+//		{
+//		case None:
+//			break;
+//		case BAR:
+//		{
+//			for (const UChildActorComponent* ChildActorComponent : ChildActorComponents)
+//			{
+//				if (ChildActorComponent && ChildActorComponent->GetChildActor())
+//				{
+//					ABarBaseActor* BarChildActor = Cast<ABarBaseActor>(ChildActorComponent->GetChildActor());
+//					BarChildActor->PlayBarAnimation();
+//				}
+//			}
+//			break;
+//		}
+//			
+//		case LINE:
+//		{
+//			break;
+//		}
+//
+//		case PIE:
+//		{
+//			break;
+//		}
+//		case XY:
+//		{
+//			break;
+//		}
+//		case XYZ:
+//		{
+//			break;
+//		}
+//		case FREE:
+//		{
+//			break;
+//		}
+//		default:
+//		{
+//			break;
+//		}
+//		}
+//	}
+//}
 
-// 모양 차트 생성
-void AData3DActor::CreateShapeChart(const FShapeChartData& CopiedData)
+//void AData3DActor::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+//{
+//	Super::PostEditChangeProperty(PropertyChangedEvent);
+//
+//	// 속성 이름이 "ComponentClass"인 경우에만 처리
+//	FName PropertyName = (PropertyChangedEvent.Property != nullptr) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+//	if (PropertyName == GET_MEMBER_NAME_CHECKED(AData3DActor, ChartGeneratorComponentClass))
+//	{
+//		if (ChartGeneratorComponent)
+//		{
+//			ChartGeneratorComponent->DestroyComponent();  // 기존 부모 컴포넌트 삭제
+//			ChartGeneratorComponent = nullptr;  // 포인터 초기화
+//		}
+//
+//		// 선택된 자식 클래스로 새로운 컴포넌트 생성
+//		if (ChartGeneratorComponentClass && ChartGeneratorComponentClass->IsChildOf(UChartGenerator::StaticClass()))
+//		{
+//			ChartGeneratorComponent = NewObject<UChartGenerator>(this, ChartGeneratorComponentClass, TEXT("ParentComponent"));
+//			
+//			UBarGenerator* BarGenerateComponent = Cast<UBarGenerator>(ChartGeneratorComponent);
+//			BarGenerateComponent->SplineComponent
+//
+//			ChartGeneratorComponent->SetupAttachment(RootComponent);
+//			ChartGeneratorComponent->RegisterComponent();
+//
+//			// 자식 클래스의 생성자가 호출되며 필요한 초기화(화살표 컴포넌트 초기화 등)가 실행됨
+//		}
+//
+//	}
+//}
+
+
+/// <summary>
+/// BarActor Funcions
+/// </summary>
+
+AData3DActorBar::AData3DActorBar()
 {
-	UE_LOG(LogTemp, Log, TEXT("Data3DActor : Generating ShapeChart"));
-	ClearChildrenActors();
-	
-	TArray<float> ValueArray = CopiedData.Values;
-	TArray<FString> LabelAarray = CopiedData.Labels;
-	int32 Numbers = ValueArray.Num();
-	CurrentChartType = CopiedData.ChartType;
+	BarGeneratorComponent = CreateDefaultSubobject<UBarGenerator>(TEXT("barGeneratorComponent"));
+	BarGeneratorComponent->SetupAttachment(RootComponent);
 
-	// 스플라인 총 길이
-	float SplineLength = SplineComponent->GetSplineLength();
-
-	// 차트 최대 높이
-	float MaxHeight = ArrowComponent->ArrowLength;
-
-	// 스플라인 사이 간격
-	float SplineSpacing = SplineLength / (Numbers - 1);
-
-	// 바 타입 차트 생성 사전 준비
-	if (CurrentChartType == "bar")
+	static ConstructorHelpers::FClassFinder<ABarBaseActor> ActorClassFinder(TEXT("Content/Data/BP_BarBaseActor01.uasset"));
+	if (ActorClassFinder.Succeeded())
 	{
-		float AverageHeight=0;
-		float BarHeightScaler=0;
-
-		bool isPrepareDone = PrepareBarValues(ValueArray, AverageHeight, BarHeightScaler, SplineLength, MaxHeight);
-
-		if (!isPrepareDone)
-		{
-			UE_LOG(LogTemp, Log, TEXT("Data3DActor: Preparing Bar Values Failed"));
-			return;
-		}
-
-		bool isGenerateDone = GenerateBar(ValueArray, LabelAarray ,SplineSpacing, AverageHeight, BarHeightScaler);
-		if (!isGenerateDone)
-		{
-			UE_LOG(LogTemp, Log, TEXT("Data3DActor : Generating Bar Failed"));
-			return;
-		}
+		UE_LOG(LogTemp, Log, TEXT("Default Bar Source Blueprint set "));
+		BarBaseActorBPClass = ActorClassFinder.Class;
 	}
 }
-// 막대 그래프 사전 준비 함수 : 막대 그래프의 데이터, 막대 그래프 라벨 ,값을 넣을 평균 값, 값을 넣을 가중치값 스플라인 길이, 최고 높이)
-bool AData3DActor::PrepareBarValues(const TArray<float>& ValueArray, float& AverageHeightResult, float&BarHeightScalerResult , int SplineLength, int MaxHeight)
+
+void AData3DActorBar::SetDataClassInstance()
 {
-	UE_LOG(LogTemp, Log, TEXT("Data3DActor : Preperating Bar Chart"));
-
-	int32 Numbers = ValueArray.Num();
-
-	// 차트 평균
-	float sum = 0;
-	for (float value : ValueArray)
+	if (DataManagerReference)
 	{
-		sum += value;
-	}
-	AverageHeightResult = sum / Numbers;
-
-	// 스케일 결정 코드 수정되어야
-	BarHeightScalerResult = MaxHeight / (2 * AverageHeightResult);
-
-	// 로그 스케일링, 정규화 따로 파라미터 빼서 고를 수 있게 할 것
-
-	if (ChildActorComponents.Num() > 0)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Child Actors Already Exist"));
-		return false;
+		UE_LOG(LogTemp, Log, TEXT("Data3DActor : Getting Last Chart Data Class Instance"));
+		DataClassInstance = DataManagerReference->GetChartDataClassInstance(TEXT("ShapeChartBarClass"));
+		if (DataClassInstance)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Data3DActor : DataClassInstance : %s"), *DataClassInstance->GetName());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Data3DActor : DataClassInstacning Failed"));
+		}
 	}
 	else
 	{
-		return true;
+		UE_LOG(LogTemp, Error, TEXT("Data3DActor : no DataManagerReference"));
 	}
 }
 
-bool AData3DActor::GenerateBar(const TArray<float>& ValueArray, const TArray<FString>& LabelArray, const int BarSpacing, const float AverageHeight, const float BarHeightScaler)
+void AData3DActorBar::GenerateChartRoutine()
 {
-	int32 Numbers = ValueArray.Num();
-
-	// 바 차트 생성 : ValueArray, AverageHeight, BarHeightScaler
-	for (int32 i = 0; i < Numbers; i++)
+	UE_LOG(LogTemp, Log, TEXT("Data3DActorBar : Generate Chart Routine Running"));
+	if (!DataClassInstance)
 	{
-		float CurrentValue = ValueArray[i];
-		float ScaledDeviation = (CurrentValue - AverageHeight) * DeviationScaler;
-		float ScaledHeight = (CurrentValue + ScaledDeviation) * BarHeightScaler;
-
-		float Distance = i * BarSpacing;
-
-		FVector BarLocation = SplineComponent->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::Local);
-		
-		FString LabelName = LabelArray[i];
-
-		// 자손 액터(차트 액터) 넣을 UChildActorComponent* 반복 생성
-		UChildActorComponent* NewChildActorComponent = NewObject<UChildActorComponent>(this);
-		NewChildActorComponent->SetupAttachment(RootComponent);
-
-		if (NewChildActorComponent)
-		{
-			UE_LOG(LogTemp, Log, TEXT("Data3DActor : Creating Bar Child Object : %s"), *NewChildActorComponent->GetName());
-
-			// 자손 컴포넌트 부착
-			NewChildActorComponent->SetupAttachment(RootComponent);
-
-			//자손 액터 클래스 설정
-			NewChildActorComponent->SetChildActorClass(BarBase);
-
-			// 자손 액터 생성
-			NewChildActorComponent->CreateChildActor();
-
-			// 배열에 추가
-			ChildActorComponents.Add(NewChildActorComponent);
-
-			if (NewChildActorComponent->GetChildActor())
-			{
-				// ABarBaseAcotr로 UChildActorComponent 캐스팅
-				ABarBaseActor* ChildBar = Cast<ABarBaseActor>(NewChildActorComponent->GetChildActor());
-				if (ChildBar)
-				{
-					//UE_LOG(LogTemp, Log, TEXT("Data3DActor : ChildBP : %s"), *ChildBar->AnimationCurve->GetName());
-
-					// 바 프로시저럴 메쉬 생성
-					ChildBar->CreateBarMesh(ScaledHeight);
-					// 바 라벨 텍스트 렌더러 생성
-					ChildBar->CreateTextMeshLabel(LabelName); //여기부터 하면 됨
-					// 바 값 텍스트 렌더러 생성
-					ChildBar->CreateTextMeshValue(CurrentValue, ScaledHeight);
-					// 이동
-					ChildBar->SetActorRelativeLocation(BarLocation);
-
-				}
-				else
-				{
-					UE_LOG(LogTemp, Error, TEXT("Data3DActor : Failed Casting ChildBarBaseActor"));
-					return false;
-				}
-			}
-			else
-			{
-				UE_LOG(LogTemp, Error, TEXT("Data3DActor : Failed NewChildActorComponent->GetChildActor() "));
-			}
-			
-		}
-
-		UE_LOG(LogTemp, Log, TEXT("Data3DActor : Created bar Number with Height: %f"),ScaledHeight);
+		UE_LOG(LogTemp, Warning, TEXT("Data3DActorBar : DataClassInstance is null, SetDataClassInstance"));
+		SetDataClassInstance();
 	}
-	return true;
-}
 
-
-// 여기 last로 말고, 멤버변수 charttype으로 바꾸는것부터 시작
-void AData3DActor::PlayLastChildrenAnimation()
-{
-	if (DataManagerPtr)
+	// 생성할 바 소스 액터 BarGenerator에 전달
+	if (BarBaseActorBPClass)
 	{
-		EChartTypes LastType = DataManagerPtr->LastChartType;
-		switch (LastType)
-		{
-		case None:
-			break;
-		case BAR:
-			for (const UChildActorComponent* ChildActorComponent : ChildActorComponents)
-			{
-				if (ChildActorComponent && ChildActorComponent->GetChildActor())
-				{
-					ABarBaseActor* BarChildActor = Cast<ABarBaseActor>(ChildActorComponent->GetChildActor());
-					BarChildActor->PlayBarAnimation();
-				}
-			}
-			break;
-		case LINE:
-			break;
-		case PIE:
-			break;
-		case XY:
-			break;
-		case XYZ:
-			break;
-		case FREE:
-			break;
-		default:
-			break;
-		}
+		BarGeneratorComponent->SetBarSourceActor(BarBaseActorBPClass);
 	}
-}
-
-// Base에 붙은 액터 삭제
-void AData3DActor::ClearChildrenActors()
-{
-	int32 ExistActors = ChildActorComponents.Num();
-
-
-	for (UChildActorComponent* ChildComponent : ChildActorComponents)
+	else
 	{
-		if (ChildComponent && ChildComponent->GetChildActor())
-		{
-			UE_LOG(LogTemp, Log, TEXT("Data3DActor : Children Actor %s cleard"), *ChildComponent->GetChildActor()->GetName());
-			ChildComponent->GetChildActor()->Destroy();
-			ChildComponent->DestroyComponent();
-		}
+		UE_LOG(LogTemp, Warning, TEXT("Data3DActor : BarBaseActorBPClass is null"));
 	}
-	UE_LOG(LogTemp, Log, TEXT("All Children Actors cleard"));
 
-	ChildActorComponents.Empty();
-}
-
-
-void AData3DActor::GetDataAndCreateChart()
-{
-	if (DataManagerPtr)
+	if (DataClassInstance)
 	{
-		UDataClasses* ptr = DataManagerPtr->GetLastChartDataClassInstancePtr();
-		EChartTypes LastType = EChartTypes::None;
-		UE_LOG(LogTemp, Log, TEXT("Data3DActor : LastChartType is %d"), LastType)
-		switch (LastType)
-		{
-		case None:
-			break;
-		case BAR:
-			//CreateShapeChart(DataManagerPtr->ShapeChartData);
-			break;
-		case LINE:
-			break;
-		case PIE:
-			break;
-		case XY:
-			break;
-		case XYZ:
-			break;
-		case FREE:
-			break;
-		default:
-			break;
-		}
+		// 데이터로부터 차트 타입 추출
+		EChartTypes ECurrentChartType = DataClassInstance->GetChartType();
+		UE_LOG(LogTemp, Log, TEXT("Data3DActorBar : LastChartType is %d"), ECurrentChartType);
 
+		// 바 데이터 객체로 데이터 클래스 객체 캐스팅
+		UShapeChartBarClass* BarDataClassInstance = Cast<UShapeChartBarClass>(DataClassInstance);
+
+		// GenerateBarChart() : 데이터 입력 받아 차트 생성 루틴 함수 호출 / GetShapeChartData() : Bar(모양)차트 데이터 Get
+		BarGeneratorComponent->GenerateBarChart(BarDataClassInstance->GetShapeChartData());
 	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Data3DActorBar : DataClassInstance is null"));
+	}
+
 }
 
 

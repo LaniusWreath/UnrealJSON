@@ -48,7 +48,10 @@ public:
 	float Width_bar = 10.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
-	float TextSizeUnit = 100;
+	float TextSizeUnit_value = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
+	float TextSizeUnit_label = 10;
 
 protected:
 	// Called when the game starts or when spawned

@@ -6,9 +6,15 @@
 #include "Datas/HTTPHandler.h"
 #include "Serialization/JsonWriter.h"
 
+void UDataManager::JsonReadProcessRoutine(const FString& FilePath)
+{
+	TSharedPtr<FJsonObject> Data = LoadDataFromJSON(FilePath);
+	FDataInstancePair NewChartData = InstancingDataClass(Data);
+	ChartDataClassInstanceArray.Add(NewChartData);
+}
 
 // 탐색기 패스로 파일 읽기, 나중에 오버로딩 하던 뭘 하던 JSON만 넘겨받는 함수 만들 것
-void UDataManager::LoadDataFromJSON(const FString& FilePath)
+TSharedPtr<FJsonObject> UDataManager::LoadDataFromJSON(const FString& FilePath)
 {
 	if (!JSONHandlerInstance)
 	{
@@ -20,117 +26,12 @@ void UDataManager::LoadDataFromJSON(const FString& FilePath)
 		const TSharedPtr<FJsonObject> ParsedData = JSONHandlerInstance->GetJsonObjectData(FilePath);
 
 		DataString = SerializeJSONToString(ParsedData);
+		return ParsedData;
 	}
-
-		//	// 열거형에 차트타입 저장
-		//	int32 ChartTypeNumber = DataTypes::MapChartTypes[ChartType.ToUpper()];
-		//	UE_LOG(LogTemp, Log, TEXT("DataManger : CurrentChartTypeNumber is %d"), ChartTypeNumber);
-		//	switch (ChartTypeNumber)
-		//	{
-		//	case(1):
-		//	{
-		//		LastChartType = EChartTypes::BAR;
-		//		break;
-		//	}
-		//	case(2):
-		//	{
-		//		LastChartType = EChartTypes::LINE;
-		//		break;
-		//	}
-		//	case(3):
-		//	{
-		//		LastChartType = EChartTypes::PIE;
-		//		break;
-		//	}
-		//	default:
-		//		break;
-		//	}
-		//	
-		//}
-
-		// 차트 타입이 2차원 xy일 경우
-		//else if (ChartType == "xy")
-		//{
-		//	// x축 데이터
-		//	const TSharedPtr<FJsonObject> XAxisObject = ParsedData->GetObjectField(TEXT("xAxis"));
-
-		//	XYChartData.XName = XAxisObject->GetStringField(TEXT("key"));
-
-		//	TArray<TSharedPtr<FJsonValue>> XArray = XAxisObject->GetArrayField(TEXT("data"));
-		//	XYChartData.XData.Empty();
-		//	for (const TSharedPtr<FJsonValue>& Value : XArray)
-		//	{
-		//		XYChartData.XData.Add(Value->AsNumber());
-		//	}
-
-		//	// y축 데이터
-		//	const TSharedPtr<FJsonObject> YAxisObject = ParsedData->GetObjectField(TEXT("yAxis"));
-
-		//	XYChartData.YName = YAxisObject->GetStringField(TEXT("key"));
-
-		//	TArray<TSharedPtr<FJsonValue>> YArray = YAxisObject->GetArrayField(TEXT("data"));
-		//	XYChartData.YData.Empty();
-		//	for (const TSharedPtr<FJsonValue>& Value : YArray)
-		//	{
-		//		XYChartData.YData.Add(Value->AsNumber());
-		//	}
-
-		//	LastChartType = EChartTypes::XY;
-		//}
-
-		//// 차트 타입이 3차원 벡터일 경우
-		//else if (ChartType == "xyz")
-		//{
-		//	const TArray<TSharedPtr<FJsonValue>> ParsedCoordinates = ParsedData->GetArrayField(TEXT("coordinates"));
-		//	XYZChartData.Coordinates.Empty();
-
-		//	for (const TSharedPtr<FJsonValue>& Value : ParsedCoordinates)
-		//	{
-		//		const TSharedPtr<FJsonObject> CoordinateObject = Value->AsObject();
-		//		FString PointName = CoordinateObject->GetStringField(TEXT("label"));
-		//		float X = CoordinateObject->GetNumberField(TEXT("x"));
-		//		float Y = CoordinateObject->GetNumberField(TEXT("y"));
-		//		float Z = CoordinateObject->GetNumberField((TEXT("z")));
-
-		//		FVector Coordinate(X, Y, Z);
-		//		XYZChartData.Coordinates.Add(Coordinate);
-		//		XYZChartData.Names.Add(PointName);
-		//	}
-
-		//	LastChartType = EChartTypes::XYZ;
-		//}
-		//
-		//// 차트 타입이 자유로운 형식일 경우
-		//else if (ChartType == "free")
-		//{
-		//	FreeFormData.Empty();
-		//	for (const auto& Pair : ParsedData->Values)
-		//	{
-		//		// JSON 값이 문자열인 경우만 처리(나중에 필요한 데이터 계속 추가할 것, boolean 등)
-		//		if (Pair.Value->Type == EJson::String)
-		//		{
-		//			FreeFormData.Add(Pair.Key, Pair.Value->AsString());
-		//		}
-		//		else if (Pair.Value -> Type == EJson::Number)
-		//		{
-		//			FreeFormData.Add(Pair.Key, FString::SanitizeFloat(Pair.Value->AsNumber()));
-		//		}
-		//		else
-		//		{
-		//			FreeFormData.Add(Pair.Key, TEXT("Unsupported data Type"));
-		//		}
-		//	}
-		//	
-		//	LastChartType = EChartTypes::FREE;
-		//}
-
-		//// 차트 타입 에러
-		//else
-		//{
-		//	UE_LOG(LogTemp, Error, TEXT("Unvaild Chart Type : %s" ),*ChartType );
-		//}
-
-	//UE_LOG(LogTemp, Log, TEXT("Chart Data Parsed for Type : %s"), *ChartType);
+	else
+	{
+		return nullptr;
+	}
 }
 
 void UDataManager::LoadDataFromCSV(const FString& FilePath)
@@ -141,20 +42,21 @@ void UDataManager::FetchDataFromHTTP(const FString& URL)
 {
 }
 
-// 데이터 큐 맨 앞 pop
-UDataClasses* UDataManager::GetLastChartDataClassInstancePtr()
+//  배열에서 참조만 삭제될 뿐 실제 객체는 사라지지 않음.
+UDataClasses* UDataManager::GetChartDataClassInstance(const FString& ClassName)
 {
-	if (ChartDataClassInstanceQueue.Num() > 0)
+	for (int32 i = 0; i < ChartDataClassInstanceArray.Num(); i++)
 	{
-		UDataClasses* ptr = ChartDataClassInstanceQueue[0];
-		ChartDataClassInstanceQueue.RemoveAt(0);
-		return ptr;
+		UE_LOG(LogTemp, Log, TEXT("DataManager : Current Data Class Instance name : %s"), *ChartDataClassInstanceArray[i].ClassName)
+		if (ChartDataClassInstanceArray[i].ClassName == ClassName)
+		{
+			UDataClasses* FindingReference = ChartDataClassInstanceArray[i].DataInstance;
+			ChartDataClassInstanceArray.RemoveAt(i);
+			return FindingReference;
+		}
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("DataManager.cpp : ChartDataClassInstanceQueue is empty"));
-		return nullptr;
-	}
+	UE_LOG(LogTemp, Warning, TEXT("DataManager.cpp : ChartDataClassInstanceQueue is empty or no such class"));
+	return nullptr;
 }
 
 // FString 으로 변환한 JSON Getter()
@@ -185,8 +87,8 @@ FString UDataManager::SerializeJSONToString(const TSharedPtr<FJsonObject> JSONOb
 	return JsonString;
 }
 
-// 데이터 입력 받아 DataClass 객체 생성 
-void UDataManager::InstancingDataClass(TSharedPtr<FJsonObject>& Data)
+// 데이터 입력 받아 DataClass 객체 생성 -> Chart
+FDataInstancePair UDataManager::InstancingDataClass(TSharedPtr<FJsonObject>& Data)
 {
 	FString ChartType = Data->GetStringField(TEXT("chartType"));
 	int32 ChartTypeNumber = DataTypes::MapChartTypes[ChartType.ToUpper()];
@@ -200,6 +102,8 @@ void UDataManager::InstancingDataClass(TSharedPtr<FJsonObject>& Data)
 	{
 		// 데이터 객체 생성
 		UShapeChartBarClass* NewChartBarClass = NewObject<UShapeChartBarClass>(this);
+
+		FString ClassName = NewChartBarClass->GetClass()->GetName();
 
 		// X축 라벨 이름 추출
 		const TSharedPtr<FJsonObject> XAxisObject = Data->GetObjectField(TEXT("xAxis"));
@@ -225,9 +129,10 @@ void UDataManager::InstancingDataClass(TSharedPtr<FJsonObject>& Data)
 			YValues.Add(Value->AsNumber());
 		}
 		NewChartBarClass->SetChartData(ChartType, XName, XLabels, YName, YValues);
-		ChartDataClassInstanceQueue.Add(NewChartBarClass);
 
-		break;
+		FDataInstancePair DataPair(ClassName, NewChartBarClass);
+		
+		return DataPair;
 	}
 		
 	case LINE:
@@ -241,6 +146,8 @@ void UDataManager::InstancingDataClass(TSharedPtr<FJsonObject>& Data)
 	case FREE:
 		break;
 	}
+	UE_LOG(LogTemp, Warning, TEXT("DataManager.cpp : Instancing Data Class was failed"));
+	return {TEXT("None") ,nullptr};
 }
 
 

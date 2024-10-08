@@ -7,13 +7,11 @@
 #include "DataTypes.h"
 #include "Data3DActor.generated.h"
 
-class UDataManageGameInstance;
 class UDataManager;
-class USplineComponent;
-class ABarBaseActor;
-class UArrowComponent;
+class UDataClasses;
+class UChartGenerator;
 
-UCLASS(Blueprintable)
+UCLASS(Abstract)
 class TEST_API AData3DActor : public AActor
 {
 	GENERATED_BODY()
@@ -27,64 +25,62 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	UStaticMeshComponent* BaseMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")
-	USplineComponent* SplineComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")
-	UArrowComponent* ArrowComponent;
-
-	// ABarBaseActor BP서 참조
-	UPROPERTY(EditAnywhere, Category = "Chart")
-	TSubclassOf<ABarBaseActor> BarBase;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
-	TArray<UChildActorComponent*> ChildActorComponents;
-
-
-	UFUNCTION(BlueprintCallable, Category = "Chart")
-	void GetDataAndCreateChart();
-
-	UFUNCTION(BlueprintCallable, Category = "Chart")
-	void CreateShapeChart(const FShapeChartData& CopiedData);
-
-	UFUNCTION(BlueprintCallable, Category = "Chart")
-	bool PrepareBarValues(const TArray<float>& ValueArray, float& AverageHeightResult, float& BarHeightScalerResult, int SplineLength, int MaxHeight);
-
-	UFUNCTION(BlueprintCallable, Category = "Chart")
-	bool GenerateBar(const TArray<float>& ValueArray, const TArray<FString>& LabelArray, const int BarSpacing, const float AverageHeight, const float BarHeightScaler);
-
-	UFUNCTION(BlueprintCallable, Category = "Chart")
-	void PlayLastChildrenAnimation();
-
-	UFUNCTION(BlueprintCallable, Category = "Chart")
-	void ClearChildrenActors();
-
-	// 편차 강제로 늘리는 값(되도록 0~1까지만)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
-	float DeviationScaler = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
-	FShapeChartData TestShapeData;
-
+	// 현재 차트 타입
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FString CurrentChartType;
 
+	// 에디터 상에서 결정할 차트 제너레이터 컴포넌트의 클래스 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChartSettings", meta = (DisplayPriority = 0))
+	TSubclassOf<UChartGenerator> ChartGeneratorComponentClass;
 
-	UFUNCTION(CallInEditor, Category = "Chart")
-	void UpdateInEditor();
+	UFUNCTION()
+	void InitilizeDataManager();
 
-	//virtual void OnConstruction(const FTransform& Transform) override;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// 데이터 인스턴스 저장 가상함수 
+	UFUNCTION(BlueprintCallable, Category = "Chart")
+	virtual void SetDataClassInstance() PURE_VIRTUAL(UDataFetcherBase::FetchData, ;);
 
-private:
+	// 가상함수
+	UFUNCTION(BlueprintCallable, Category = "Chart")
+	virtual void GenerateChartRoutine()  PURE_VIRTUAL(UDataFetcherBase::FetchData, ;);
+
 	// DataManager Reference
 	UPROPERTY()
-	UDataManager* DataManagerPtr;
-	UFUNCTION(BlueprintCallable)
-	void InitilizeDataManager();
+	UDataManager* DataManagerReference;
+
+};
+
+class USplineComponent;
+class UArrowComponent;
+class UBarGenerator;
+class ABarBaseActor;
+
+UCLASS(Blueprintable)
+class AData3DActorBar : public AData3DActor
+{
+	GENERATED_BODY()
+
+private:
+	UPROPERTY()
+	UBarGenerator* BarGeneratorComponent;
+
+	UPROPERTY()
+	UDataClasses* DataClassInstance;
+
+protected:
+	virtual void SetDataClassInstance() override;
+	virtual void GenerateChartRoutine() override;
+
+public:
+	AData3DActorBar();
+
+	// ABarBaseActor BP서 참조, Data3DActorBar에서 할당
+	UPROPERTY(EditAnywhere, BlueprintReadWrite ,Category = "Chart")
+	TSubclassOf<ABarBaseActor> BarBaseActorBPClass;
 
 };

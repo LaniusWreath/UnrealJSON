@@ -5,11 +5,29 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "DataClasses.h"
+#include "Templates/SharedPointer.h"
 #include "DataManager.generated.h"
 
 class UJsonHandler;
 class UCSVHandler;
 class UHTTPHandler;
+
+USTRUCT(BlueprintType)
+struct FDataInstancePair
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString ClassName;
+
+	UPROPERTY()
+	UDataClasses* DataInstance;
+
+	FDataInstancePair() : ClassName(TEXT("")), DataInstance(nullptr) {}
+	FDataInstancePair(const FString& InClassName, UDataClasses* InInstance)
+		: ClassName(InClassName), DataInstance(InInstance) {}
+};
+
 
 UCLASS(Blueprintable, BlueprintType)
 class TEST_API UDataManager : public UObject
@@ -18,52 +36,40 @@ class TEST_API UDataManager : public UObject
 
 private:
 
-	// Property
+	// DataHander 인스턴스 저장
 	UJsonHandler* JSONHandlerInstance;
 	UCSVHandler* CSVHandlerInstance;
 	UHTTPHandler* HTTPHandlerInstance;
 
 	// JSON String 직렬화
 	FString SerializeJSONToString(const TSharedPtr<FJsonObject> JSONObject);
-
 	FString DataString;
 	
 	// Function
-	void InstancingDataClass(TSharedPtr<FJsonObject>& Data);
+	FDataInstancePair InstancingDataClass(TSharedPtr<FJsonObject>& Data);
 
+	// JSON 데이터 가져와서 포인터 객체로 반환
+	TSharedPtr<FJsonObject> LoadDataFromJSON(const FString& FilePath);
 
-public:
-	
-	// DataHander 인스턴스 저장
-	UFUNCTION(BlueprintCallable, Category = "Data Management") // JSON
-	void LoadDataFromJSON(const FString& FilePath);
-
-	UFUNCTION(BlueprintCallable, Category = "Data Management") // CSV
+	// CSV
 	void LoadDataFromCSV(const FString& FilePath);
 
-	UFUNCTION(BlueprintCallable, Category = "Data Management") // HTTP
+	// HTTP
 	void FetchDataFromHTTP(const FString& URL);
 
+	// 셰이프 차트용 데이터 저장 컨테이너
+	UPROPERTY()
+	TArray<FDataInstancePair> ChartDataClassInstanceArray;
+
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "Data Management")
+	void JsonReadProcessRoutine(const FString& FilePath);
+
 	UFUNCTION(BlueprintCallable, Category = "Data Management") // 데이터 클래스 큐에서 앞에것 팝
-	UDataClasses* GetLastChartDataClassInstancePtr();
+	UDataClasses* GetChartDataClassInstance(const FString& ClassName);
 
-	// 셰이프 차트용 데이터 저장
-	UPROPERTY(BlueprintReadOnly, Category = "Data")
-	TArray<UDataClasses*> ChartDataClassInstanceQueue;
-
-	// 2D XY 차트용 데이터 저장
-	UPROPERTY(BlueprintReadOnly, Category = "Data")
-	FXYChartData XYChartData;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Data")
-	FXYZChartData XYZChartData;
-
-	// 자유형 JSON
-	UPROPERTY(BlueprintReadOnly, Category = "Data")
-	TMap<FString, FString> FreeFormData;
-
-	// 차트 유형 열거형
-	EChartTypes LastChartType = EChartTypes::None;
+	// 특정 차트 데이터만 찾아서 가져오는 함수도 만들어야
 
 	// DataManager에서 전체 JSON 받아갈 수 있게끔 JSONHandler 참조 연결
 	// 앞쪽 const : 반환된 레퍼런스가 상수, 끝쪽 const : 이 함수가 객체의 상태를 변경하지 않음
@@ -71,3 +77,4 @@ public:
 	const FString& GetJSONStringData() const;
 	
 };
+

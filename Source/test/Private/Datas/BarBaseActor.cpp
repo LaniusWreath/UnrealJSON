@@ -141,7 +141,7 @@ void ABarBaseActor::CreateTextMeshLabel(const FString& LabelName)
 	TextRenderComponentLabel->SetTextRenderColor(TextColor);
 
 	// 텍스트 크기
-	TextRenderComponentLabel->SetWorldSize(TextSizeUnit);
+	TextRenderComponentLabel->SetWorldSize(TextSizeUnit_label);
 
 	// 위치 
 	TextRenderComponentLabel->SetRelativeLocation(FVector(0.f, 0.f,-padding));
@@ -160,7 +160,7 @@ void ABarBaseActor::CreateTextMeshValue(const float& FloatValue, const float& Ba
 	TextRenderComponentValue->SetTextRenderColor(TextColor);
 
 	// 텍스트 크기
-	TextRenderComponentValue->SetWorldSize(TextSizeUnit);
+	TextRenderComponentValue->SetWorldSize(TextSizeUnit_value);
 
 	// 위치
 	TextRenderComponentValue->SetRelativeLocation(FVector(0.f, 0.f, BarHeight+padding));

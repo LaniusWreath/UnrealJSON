@@ -5,7 +5,18 @@
 #include "CoreMinimal.h"
 #include "DataTypes.generated.h"
 
-// 모양 차트용 데이터 구조체
+
+namespace ChartClassNames
+{
+	static const FString NAME_BARCHART = TEXT("ShapeChartBarClass");
+	static const FString NAME_LINECHART = TEXT("ShapeChartLineClass");
+	static const FString NAME_PIECHART = TEXT("ShapeChartPieClass");
+	static const FString NAME_XYCHART = TEXT("XYChartClass");
+	static const FString NAME_XYZCHART = TEXT("XYZChartClass");
+}
+
+
+// Struct for Shape Chart Data
 USTRUCT(BlueprintType)
 struct FShapeChartData
 {
@@ -35,11 +46,13 @@ struct FXYChartData
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FString XName;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TArray<float> XData;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FString YName;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TArray<float> YData;
 };
@@ -80,4 +93,5 @@ public:
 
 	~DataTypes();
 };
+
 

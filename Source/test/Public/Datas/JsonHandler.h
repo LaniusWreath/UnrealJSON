@@ -12,9 +12,6 @@ class TEST_API UJsonHandler : public UObject
 	GENERATED_BODY()
 
 public:
-	/*UFUNCTION(BlueprintCallable, Category = "JSON")*/
+	// Json Source Read Function
 	TSharedPtr<FJsonObject> GetJsonObjectData(const FString& FilePath);
-
-	//UPROPERTY(VisibleAnywhere, Category = "Data", meta = (AllowPrivateAccess = "true"))
-	//TMap<FString, FString> JsonDataMap;
 };

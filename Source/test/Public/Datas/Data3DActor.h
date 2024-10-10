@@ -25,14 +25,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	UStaticMeshComponent* BaseMesh;
 
-	// 현재 차트 타입
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FString CurrentChartType;
 
-	// 에디터 상에서 결정할 차트 제너레이터 컴포넌트의 클래스 
+	// Chart Generator Component Class Generating what Chart Type. This Member Decides How the Chart Type to Be. 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChartSettings", meta = (DisplayPriority = 0))
 	TSubclassOf<UChartGenerator> ChartGeneratorComponentClass;
 
+	// Initializing Data Manager Getting from Game Instance
 	UFUNCTION()
 	void InitilizeDataManager();
 
@@ -41,7 +41,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	// 데이터 인스턴스 저장 가상함수 
+	// Pure Virtual Setter Data Class Instance. Getting from DataManager's ChartDataClassInstanceArray. Passing String ClassName.
 	UFUNCTION(BlueprintCallable, Category = "Chart")
 	virtual void SetDataClassInstance() PURE_VIRTUAL(UDataFetcherBase::FetchData, ;);
 
@@ -53,10 +53,11 @@ protected:
 	UPROPERTY()
 	UDataManager* DataManagerReference;
 
+	UPROPERTY()
+	UDataClasses* DataClassInstance;
+
 };
 
-class USplineComponent;
-class UArrowComponent;
 class UBarGenerator;
 class ABarBaseActor;
 
@@ -68,9 +69,6 @@ class AData3DActorBar : public AData3DActor
 private:
 	UPROPERTY()
 	UBarGenerator* BarGeneratorComponent;
-
-	UPROPERTY()
-	UDataClasses* DataClassInstance;
 
 protected:
 	virtual void SetDataClassInstance() override;

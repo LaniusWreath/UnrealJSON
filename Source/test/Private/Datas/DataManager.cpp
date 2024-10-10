@@ -42,7 +42,7 @@ void UDataManager::FetchDataFromHTTP(const FString& URL)
 {
 }
 
-//  배열에서 참조만 삭제될 뿐 실제 객체는 사라지지 않음.
+// Return DataClass from ChartDataClassInstanceArray
 UDataClasses* UDataManager::GetChartDataClassInstance(const FString& ClassName)
 {
 	for (int32 i = 0; i < ChartDataClassInstanceArray.Num(); i++)
@@ -59,7 +59,7 @@ UDataClasses* UDataManager::GetChartDataClassInstance(const FString& ClassName)
 	return nullptr;
 }
 
-// FString 으로 변환한 JSON Getter()
+// Return JSON String Getter()
 const FString& UDataManager::GetJSONStringData() const
 {
 	if (DataString == "")

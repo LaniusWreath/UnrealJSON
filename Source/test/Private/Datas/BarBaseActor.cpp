@@ -130,7 +130,7 @@ void ABarBaseActor::CreateBarMesh(float BarHeight)
 }
 
 // 라벨 텍스트 렌더러 설정
-void ABarBaseActor::CreateTextMeshLabel(const FString& LabelName)
+void ABarBaseActor::InitializeTextMeshLabel(const FString& LabelName)
 {
 	int padding = 10;
 
@@ -149,7 +149,7 @@ void ABarBaseActor::CreateTextMeshLabel(const FString& LabelName)
 }
 
 // 값 텍스트 렌더러 설정
-void ABarBaseActor::CreateTextMeshValue(const float& FloatValue, const float& BarHeight)
+void ABarBaseActor::InitializeTextMeshValue(const float& FloatValue, const float& BarHeight)
 {
 	int padding = 10;
 	

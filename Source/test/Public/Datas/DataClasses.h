@@ -10,7 +10,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class TEST_API UDataClasses : public UObject
 {
 	GENERATED_BODY()
@@ -20,7 +20,6 @@ private:
 protected:
 	virtual void ProcessData() {}
 	EChartTypes ChartType = EChartTypes::None;
-
 
 public:
 	virtual const EChartTypes GetChartType() const;

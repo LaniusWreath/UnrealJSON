@@ -177,7 +177,7 @@ void AData3DActorBar::SetDataClassInstance()
 	if (DataManagerReference)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Data3DActor : Getting Last Chart Data Class Instance"));
-		DataClassInstance = DataManagerReference->GetChartDataClassInstance(TEXT("ShapeChartBarClass"));
+		DataClassInstance = DataManagerReference->GetChartDataClassInstance(ChartClassNames::NAME_BARCHART);
 		if (DataClassInstance)
 		{
 			UE_LOG(LogTemp, Log, TEXT("Data3DActor : DataClassInstance : %s"), *DataClassInstance->GetName());

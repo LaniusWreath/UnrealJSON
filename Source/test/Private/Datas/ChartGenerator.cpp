@@ -10,8 +10,6 @@
 // 기본 차트 베이스 초기화
 UChartGenerator::UChartGenerator()
 {
-	//RootMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RootComponent"));
-	//RootMeshComponent->SetupAttachment(this);
 }
 
 void UChartGenerator::BeginPlay()
@@ -57,6 +55,7 @@ void UBarGenerator::SetBarSourceActor(const TSubclassOf<ABarBaseActor>& SourceAc
 	BarBaseActorBPClass = SourceActor;
 }
 
+// 바 차트 생성 함수
 void UBarGenerator::GenerateBarChart(const FShapeChartData& CopiedData)
 {
 	// 스플라인 총 길이 
@@ -84,8 +83,7 @@ void UBarGenerator::GenerateBarChart(const FShapeChartData& CopiedData)
 	}
 }
 
-
-
+// 바 차트 생성 전 전처리 함수
 void UBarGenerator::PrepareBarValues(const TArray<float>& ValueArray, float& AverageHeightResult, float& BarHeightScalerResult, const int SplineLength, const int MaxHeight)
 {
 	UE_LOG(LogTemp, Log, TEXT("ChartGenerator : Preperating Bar Chart"));
@@ -152,9 +150,9 @@ bool UBarGenerator::CreateBar(const TArray<float>& ValueArray, const TArray<FStr
 					// 바 프로시저럴 메쉬 생성
 					ChildBar->CreateBarMesh(ScaledHeight);
 					// 바 라벨 텍스트 렌더러 생성
-					ChildBar->CreateTextMeshLabel(LabelName); //여기부터 하면 됨
+					ChildBar->InitializeTextMeshLabel(LabelName); //여기부터 하면 됨
 					// 바 값 텍스트 렌더러 생성
-					ChildBar->CreateTextMeshValue(CurrentValue, ScaledHeight);
+					ChildBar->InitializeTextMeshValue(CurrentValue, ScaledHeight);
 					// 이동
 					ChildBar->SetActorRelativeLocation(BarLocation);
 					// 애니메이션

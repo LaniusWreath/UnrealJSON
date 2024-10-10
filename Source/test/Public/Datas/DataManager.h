@@ -12,6 +12,7 @@ class UJsonHandler;
 class UCSVHandler;
 class UHTTPHandler;
 
+// Struct With String Header And Data
 USTRUCT(BlueprintType)
 struct FDataInstancePair
 {
@@ -28,7 +29,7 @@ struct FDataInstancePair
 		: ClassName(InClassName), DataInstance(InInstance) {}
 };
 
-
+// Manage Datas Class and Control those Member Function
 UCLASS(Blueprintable, BlueprintType)
 class TEST_API UDataManager : public UObject
 {
@@ -36,43 +37,42 @@ class TEST_API UDataManager : public UObject
 
 private:
 
-	// DataHander 인스턴스 저장
+	// DataHander Instances
 	UJsonHandler* JSONHandlerInstance;
 	UCSVHandler* CSVHandlerInstance;
 	UHTTPHandler* HTTPHandlerInstance;
 
-	// JSON String 직렬화
+	// JSON String Serialization Function
 	FString SerializeJSONToString(const TSharedPtr<FJsonObject> JSONObject);
 	FString DataString;
 	
-	// Function
+	// JsonObject Ptr to Data Struct <String Header, UDataClasses* DataClassInstance>
 	FDataInstancePair InstancingDataClass(TSharedPtr<FJsonObject>& Data);
 
-	// JSON 데이터 가져와서 포인터 객체로 반환
+	// Instancing JsonHandler and Get JsonObject Ptr
 	TSharedPtr<FJsonObject> LoadDataFromJSON(const FString& FilePath);
 
-	// CSV
+	// Instancing CSVHandler and Get JsonObject Ptr
 	void LoadDataFromCSV(const FString& FilePath);
 
-	// HTTP
+	// Instancing HTTPHandler and Get JsonObject Ptr
 	void FetchDataFromHTTP(const FString& URL);
 
-	// 셰이프 차트용 데이터 저장 컨테이너
+	// Container for Data Struct
 	UPROPERTY()
 	TArray<FDataInstancePair> ChartDataClassInstanceArray;
 
 public:
 
+	// Routine Function for Controlling Json Reading to Processing Functions
 	UFUNCTION(BlueprintCallable, Category = "Data Management")
 	void JsonReadProcessRoutine(const FString& FilePath);
 
-	UFUNCTION(BlueprintCallable, Category = "Data Management") // 데이터 클래스 큐에서 앞에것 팝
+	// Getter Data Class Instance only without Header from Data Struct
+	UFUNCTION(BlueprintCallable, Category = "Data Management")
 	UDataClasses* GetChartDataClassInstance(const FString& ClassName);
 
-	// 특정 차트 데이터만 찾아서 가져오는 함수도 만들어야
-
-	// DataManager에서 전체 JSON 받아갈 수 있게끔 JSONHandler 참조 연결
-	// 앞쪽 const : 반환된 레퍼런스가 상수, 끝쪽 const : 이 함수가 객체의 상태를 변경하지 않음
+	// Getter Serialized JSON String Data
 	UFUNCTION(BlueprintCallable, Category = "Data")
 	const FString& GetJSONStringData() const;
 	

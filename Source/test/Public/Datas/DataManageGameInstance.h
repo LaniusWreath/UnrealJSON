@@ -15,7 +15,7 @@ class TEST_API UDataManageGameInstance : public UGameInstance
 
 private:
 	UPROPERTY()
-	UDataManager* DataManager;
+	UDataManager* DataManagerInstance;
 
 public:
 

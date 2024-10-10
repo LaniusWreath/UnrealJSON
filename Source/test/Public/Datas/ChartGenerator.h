@@ -9,12 +9,9 @@
 /**
  * 
  */
-class UArrowComponent;
-class USplineComponent;
-class ABarBaseActor;
 
-// 컴포넌트 
-UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+// ChartGenerator Abstract Component Class
+UCLASS(Abstract, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class TEST_API UChartGenerator : public USceneComponent
 {
 	GENERATED_BODY()
@@ -24,7 +21,7 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* RootMeshComponent;
 
-	// 차트 요소 액터가 담길 배열
+	// This Array contains Chart Base BP Actor 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	TArray<UChildActorComponent*> ChildActorComponents;
 
@@ -38,31 +35,37 @@ public:
 
 };
 
+class UArrowComponent;
+class USplineComponent;
+class ABarBaseActor;
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class UBarGenerator : public UChartGenerator
 {
 	GENERATED_BODY()
 
 private:
-	// 연출용 편차 계수
+	// For Visually Modulation Bar Chart with Deviagtion 
 	float DeviationScaler = 1;
 
+	// Chart Value PreProcess function
 	UFUNCTION()
 	void PrepareBarValues(const TArray<float>& ValueArray, float& AverageHeightResult, float& BarHeightScalerResult,
 		const int SplineLength, const int MaxHeight);
 
+	// Create BarChart Function
 	UFUNCTION()
 	bool CreateBar(const TArray<float>& ValueArray, const TArray<FString>& LabelArray, const int BarSpacing,
 		const float AverageHeight, const float BarHeightScaler);
 
-	// ABarBaseActor BP서 참조, Data3DActorBar에서 할당
+	// BP BarBase Actor Source to Display 
 	UPROPERTY(VisibleAnywhere, Category = "Chart")
 	TSubclassOf<ABarBaseActor> BarBaseActorBPClass;
 
 public:
 	UBarGenerator();
 
-	// 바 생성 루틴 호출 함수
+	// Generate Bar Chart Routine Function
 	UFUNCTION(BlueprintCallable, Category = "Chart")
 	void GenerateBarChart(const FShapeChartData& CopiedData);
 
@@ -72,6 +75,7 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 	UArrowComponent* ArrowComponent;
 
+	// Set BP BarBase Actor Source to Display 
 	UFUNCTION()
 	void SetBarSourceActor(const TSubclassOf<ABarBaseActor>& SourceActor);
 

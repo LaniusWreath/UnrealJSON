@@ -8,8 +8,8 @@ void UDataManageGameInstance::Init()
 	Super::Init();
 
 	UE_LOG(LogTemp, Log, TEXT("Initialize DataManageGameInstance"));
-	DataManager = NewObject<UDataManager>(this);
-	if (DataManager)
+	DataManagerInstance = NewObject<UDataManager>(this);
+	if (DataManagerInstance)
 	{
 		UE_LOG(LogTemp, Log, TEXT("DataManageGameInstance Initialized"));
 	}
@@ -21,10 +21,10 @@ void UDataManageGameInstance::Init()
 
 UDataManager* UDataManageGameInstance::GetDataManager() const
 {
-	if (DataManager)
+	if (DataManagerInstance)
 	{
 		UE_LOG(LogTemp, Log, TEXT("DataManageGameInstace : DataManager Getter Excuted"));
-		return DataManager;
+		return DataManagerInstance;
 	}
 	else
 	{

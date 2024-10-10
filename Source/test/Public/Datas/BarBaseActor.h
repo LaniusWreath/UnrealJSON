@@ -15,71 +15,69 @@ UCLASS()
 class TEST_API ABarBaseActor : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	ABarBaseActor();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chart")
+private:
+	UPROPERTY()
 	UProceduralMeshComponent* ProcMeshComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Material")
-	UMaterialInstance* MeshMaterial;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chart")
+	UPROPERTY()
 	UTimelineComponent* BarAnimationTimeline;
 
-	UPROPERTY(EditAnywhere, Category = "Chart")
-	UCurveFloat* AnimationCurve;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chart")
+	UPROPERTY()
 	UTextRenderComponent* TextRenderComponentValue;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chart")
+	UPROPERTY()
 	UTextRenderComponent* TextRenderComponentLabel;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
-	FColor Color;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
-	FColor TextColor = FColor::Blue;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
-	float Width_bar = 10.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
-	float TextSizeUnit_value = 10;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
-	float TextSizeUnit_label = 10;
+	// TimeLine Animation Binding Function
+	UFUNCTION()
+	void OnAnimationUpdate(float Value);
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	//// Called every frame
-	//virtual void Tick(float DeltaTime) override;
+	// Sets default values for this actor's properties
+	ABarBaseActor();
 
-	// 타임라인에서 불러올 함수
-	UFUNCTION()
-	void OnAnimationUpdate(float Value);
+	// Bar Procedural Mesh Material
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Material")
+	UMaterialInstance* MeshMaterial;
 
-	// 애니메이션 실행 관리 함수
+	// Bar Generate Animation Curve
+	UPROPERTY(EditAnywhere, Category = "Chart")
+	UCurveFloat* AnimationCurve;
+
+	// Text Mesh Color
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
+	FColor TextColor = FColor::Blue;
+
+	// Bar Mesh Width
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
+	float Width_bar = 10.f;
+
+	// Bar Text Unit Size : Value
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
+	float TextSizeUnit_value = 10;
+
+	// Bar Text Unit Size : Label
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
+	float TextSizeUnit_label = 10;
+
+	// Animation Control Function
 	UFUNCTION()
 	void PlayBarAnimation();
 
+	// Create Procedural Mesh
 	UFUNCTION(BlueprintCallable, Category = "Chart")
 	void CreateBarMesh(float BarHeight);
 
+	// Initialize Lbel Text Mesh
 	UFUNCTION(BlueprintCallable, Category = " Chart")
-	void CreateTextMeshLabel(const FString& LabelName);
+	void InitializeTextMeshLabel(const FString& LabelName);
 
+	// Initialize Value Text Mesh
 	UFUNCTION(BlueprintCallable, Category = " Chart")
-	void CreateTextMeshValue(const float& FloatValue, const float& BarHeight);
-
-//#if WITH_EDITOR
-//	// 에디터에서 프로퍼티가 변경될 때 호출되는 함수, AActor에서 상속
-//	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-//#endif
+	void InitializeTextMeshValue(const float& FloatValue, const float& BarHeight);
 };

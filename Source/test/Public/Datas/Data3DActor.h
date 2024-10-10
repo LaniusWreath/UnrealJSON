@@ -41,11 +41,11 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	// Pure Virtual Setter Data Class Instance. Getting from DataManager's ChartDataClassInstanceArray. Passing String ClassName.
+	// Pure Virtual Setter Data Class Instance. Getting from DataManager's ChartDataClassInstanceArray.
 	UFUNCTION(BlueprintCallable, Category = "Chart")
 	virtual void SetDataClassInstance() PURE_VIRTUAL(UDataFetcherBase::FetchData, ;);
 
-	// 가상함수
+	// Pure Virtual Routine for Generate Chart
 	UFUNCTION(BlueprintCallable, Category = "Chart")
 	virtual void GenerateChartRoutine()  PURE_VIRTUAL(UDataFetcherBase::FetchData, ;);
 
@@ -53,6 +53,7 @@ protected:
 	UPROPERTY()
 	UDataManager* DataManagerReference;
 
+	// Data Class Instance
 	UPROPERTY()
 	UDataClasses* DataClassInstance;
 
@@ -67,6 +68,7 @@ class AData3DActorBar : public AData3DActor
 	GENERATED_BODY()
 
 private:
+	// Controler Component for Generating 3D Bar Chart 
 	UPROPERTY()
 	UBarGenerator* BarGeneratorComponent;
 
@@ -77,7 +79,7 @@ protected:
 public:
 	AData3DActorBar();
 
-	// ABarBaseActor BP서 참조, Data3DActorBar에서 할당
+	// Select Bar Blueprint Actor Source to Generate
 	UPROPERTY(EditAnywhere, BlueprintReadWrite ,Category = "Chart")
 	TSubclassOf<ABarBaseActor> BarBaseActorBPClass;
 

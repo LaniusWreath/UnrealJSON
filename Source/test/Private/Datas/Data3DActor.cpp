@@ -160,6 +160,7 @@ AData3DActorBar::AData3DActorBar()
 	BarGeneratorComponent = CreateDefaultSubobject<UBarGenerator>(TEXT("barGeneratorComponent"));
 	BarGeneratorComponent->SetupAttachment(RootComponent);
 
+	// 텍스트로 경로 하드코딩함. 나중에 바꿔야
 	static ConstructorHelpers::FClassFinder<ABarBaseActor> ActorClassFinder(TEXT("Data/BP_BarBaseActor01.uasset"));
 	if (ActorClassFinder.Succeeded())
 	{

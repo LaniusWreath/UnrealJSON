@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "DataTypes.generated.h"
 
-
+// DataClasses Child Class Names for SetDataClassInstance()
 namespace ChartClassNames
 {
 	static const FString NAME_BARCHART = TEXT("ShapeChartBarClass");
@@ -15,26 +15,27 @@ namespace ChartClassNames
 	static const FString NAME_XYZCHART = TEXT("XYZChartClass");
 }
 
-
 // Struct for Shape Chart Data
 USTRUCT(BlueprintType)
 struct FShapeChartData
 {
 	GENERATED_BODY()
 
-	// 차트 타입 : "bar", "line", "pie" 등 
+	// Chart Types : "bar", "line", "pie" .. 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FString ChartType = "bar";
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FString XName = "Date";
-	// x축 라벨 또는 pie 차트 레벨
+
+	// Label for X Axis
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TArray<FString> Labels = {"2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04"};
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FString YName = "Temperature";
-	// y축 값 또는 pie 차트 비율
+	
+	// Value for Y Axis or Quotiont for PieChart
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TArray<float> Values = { 20.5, 21.0, 19.8, 22.1 };
 };

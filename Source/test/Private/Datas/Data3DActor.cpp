@@ -160,8 +160,8 @@ AData3DActorBar::AData3DActorBar()
 	BarGeneratorComponent = CreateDefaultSubobject<UBarGenerator>(TEXT("barGeneratorComponent"));
 	BarGeneratorComponent->SetupAttachment(RootComponent);
 
-	// 텍스트로 경로 하드코딩함. 나중에 바꿔야
-	static ConstructorHelpers::FClassFinder<ABarBaseActor> ActorClassFinder(TEXT("Data/BP_BarBaseActor01.uasset"));
+	// 텍스트로 블루프린트 경로 하드코딩함. 나중에 바꿔야
+	/*static ConstructorHelpers::FClassFinder<ABarBaseActor> ActorClassFinder(TEXT("Game/Data/BP_BarBaseActor01"));
 	if (ActorClassFinder.Succeeded())
 	{
 		UE_LOG(LogTemp, Log, TEXT("Default Bar Source Blueprint set "));
@@ -170,7 +170,7 @@ AData3DActorBar::AData3DActorBar()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Default Bar Source Blueprint set Failed"));
-	}
+	}*/
 }
 
 void AData3DActorBar::SetDataClassInstance()

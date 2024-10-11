@@ -5,6 +5,7 @@
 #include "Components/ArrowComponent.h"
 #include "Components/SplineComponent.h"
 #include "Datas/BarBaseActor.h"
+#include "Algo/MaxElement.h"
 
 
 // 기본 차트 베이스 초기화
@@ -41,12 +42,12 @@ void UChartGenerator::ClearChildrenActors()
 UBarGenerator::UBarGenerator()
 {
 
-	SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("SplineComponent"));
-	SplineComponent->SetupAttachment(RootMeshComponent);
+	SplineComponent_length = CreateDefaultSubobject<USplineComponent>(TEXT("SplineComponent"));
+	SplineComponent_length->SetupAttachment(RootMeshComponent);
 
-	ArrowComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent"));
-	ArrowComponent->SetupAttachment(RootMeshComponent);
-	ArrowComponent->SetRelativeRotation(FRotator(90.f, 0.f, 0.f));
+	SplineComponent_height = CreateDefaultSubobject<USplineComponent>(TEXT("HeightSplineComponent"));
+	SplineComponent_height->SetupAttachment(RootMeshComponent);
+	SplineComponent_height->SetRelativeRotation(FRotator(90.f, 0.f, 0.f));
 	
 }
 
@@ -59,9 +60,11 @@ void UBarGenerator::SetBarSourceActor(const TSubclassOf<ABarBaseActor>& SourceAc
 void UBarGenerator::GenerateBarChart(const FShapeChartData& CopiedData)
 {
 	// 스플라인 총 길이 
-	float SplineLength = SplineComponent->GetSplineLength();
+	float SplineLength = SplineComponent_length->GetSplineLength();
+	UE_LOG(LogTemp, Log, TEXT("ChartGenerator : SplineComponent is %f"), SplineLength);
+
 	// 차트 최대 높이
-	float MaxHeight = ArrowComponent->ArrowLength;
+	float MaxHeight = SplineComponent_height->GetSplineLength();
 
 	TArray<float> ValueArray = CopiedData.Values;
 	TArray<FString> LabelAarray = CopiedData.Labels;
@@ -70,12 +73,12 @@ void UBarGenerator::GenerateBarChart(const FShapeChartData& CopiedData)
 	float SplineSpacing = SplineLength / (ValueArray.Num() - 1);
 
 	// 바 타입 차트 생성 사전 준비
-	float AverageHeight = 0;
 	float BarHeightScaler = 0;
-	PrepareBarValues(ValueArray, AverageHeight, BarHeightScaler, SplineLength, MaxHeight);
+	float BarPadding = 0;
+	PrepareBarValues(ValueArray, BarHeightScaler, BarPadding, MaxHeight);
 
 	// 바 메시 생성
-	bool isGenerateDone = CreateBar(ValueArray, LabelAarray, SplineSpacing, AverageHeight, BarHeightScaler);
+	bool isGenerateDone = CreateBar(ValueArray, LabelAarray, SplineSpacing, BarPadding, BarHeightScaler);
 	if (!isGenerateDone)
 	{
 		UE_LOG(LogTemp, Log, TEXT("ChartGenerator : Generating Bar Failed"));
@@ -84,27 +87,26 @@ void UBarGenerator::GenerateBarChart(const FShapeChartData& CopiedData)
 }
 
 // 바 차트 생성 전 전처리 함수
-void UBarGenerator::PrepareBarValues(const TArray<float>& ValueArray, float& AverageHeightResult, float& BarHeightScalerResult, const int SplineLength, const int MaxHeight)
+void UBarGenerator::PrepareBarValues(const TArray<float>& ValueArray, float& BarHeightScalerResult, float& BarPaddingResult,
+	const float MaxHeight)
 {
 	UE_LOG(LogTemp, Log, TEXT("ChartGenerator : Preperating Bar Chart"));
 
 	int32 Numbers = ValueArray.Num();
 
-	// 차트 평균
-	float sum = 0;
-	for (float value : ValueArray)
-	{
-		sum += value;
-	}
-	AverageHeightResult = sum / Numbers;
+	float Range = *Algo::MaxElement(ValueArray) - *Algo::MinElement(ValueArray);
+	//UE_LOG(LogTemp, Log, TEXT("ChartGenerator : Range is : %f - %f = %f"), , *Algo::MinElement(ValueArray), Range);
+	// 100 * 0.9 / 500
+	BarHeightScalerResult = MaxHeight * CustomScaleValue / Range;
+	UE_LOG(LogTemp, Log, TEXT("ChartGenerator : Preparing Bar Height Scaler : %f * %f / %f"), MaxHeight, CustomScaleValue, Range);
 
-	// 스케일 결정 코드 수정되어야
-	BarHeightScalerResult = MaxHeight / (2 * AverageHeightResult);
+	BarPaddingResult = MaxHeight * CustomPaddingScaleValue;
 
 	// 로그 스케일링, 정규화 따로 파라미터 빼서 고를 수 있게 할 것
 }
 
-bool UBarGenerator::CreateBar(const TArray<float>& ValueArray, const TArray<FString>& LabelArray, const int BarSpacing, const float AverageHeight, const float BarHeightScaler)
+bool UBarGenerator::CreateBar(const TArray<float>& ValueArray, const TArray<FString>& LabelArray, const int BarSpacing, 
+	const float BarPaddingScaler, const float BarHeightScaler)
 {
 	ClearChildrenActors();
 
@@ -114,11 +116,11 @@ bool UBarGenerator::CreateBar(const TArray<float>& ValueArray, const TArray<FStr
 	for (int32 i = 0; i < Numbers; i++)
 	{
 		float CurrentValue = ValueArray[i];
-		float ScaledDeviation = (CurrentValue - AverageHeight) * DeviationScaler;
-		float ScaledHeight = (CurrentValue + ScaledDeviation) * BarHeightScaler;
+		float ScaledHeight = CurrentValue * BarHeightScaler + BarPaddingScaler ;
+		UE_LOG(LogTemp, Log, TEXT("ChartGenerator : CurrentValue : %f, ScaledHeight : %f"), CurrentValue, ScaledHeight);
 		float Distance = i * BarSpacing;
 
-		FVector BarLocation = SplineComponent->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::Local);
+		FVector BarLocation = SplineComponent_length->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::Local);
 		FString LabelName = LabelArray[i];
 
 		// 자손 액터(차트 액터) 넣을 UChildActorComponent* 반복 생성

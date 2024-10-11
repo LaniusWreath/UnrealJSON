@@ -189,7 +189,7 @@ void ABarBaseActor::PlayBarAnimation()
 // 막대 스케일 변경 애니메이션 실행
 void ABarBaseActor::OnAnimationUpdate(float Value)
 {
-	UE_LOG(LogTemp, Log, TEXT("BarBaseActor : BarAnimation Executing, Current Height : %f"), Value);
+	//UE_LOG(LogTemp, Log, TEXT("BarBaseActor : BarAnimation Executing, Current Height : %f"), Value);
 
 	FVector CurrentScale = GetActorScale();
 	SetActorScale3D(FVector(CurrentScale.X, CurrentScale.Y, Value));

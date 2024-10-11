@@ -35,7 +35,6 @@ public:
 
 };
 
-class UArrowComponent;
 class USplineComponent;
 class ABarBaseActor;
 
@@ -46,17 +45,18 @@ class UBarGenerator : public UChartGenerator
 
 private:
 	// For Visually Modulation Bar Chart with Deviagtion 
-	float DeviationScaler = 1;
+	float CustomScaleValue = 0.9;
+	float CustomPaddingScaleValue = 0.01;
 
 	// Chart Value PreProcess function
 	UFUNCTION()
-	void PrepareBarValues(const TArray<float>& ValueArray, float& AverageHeightResult, float& BarHeightScalerResult,
-		const int SplineLength, const int MaxHeight);
+	void PrepareBarValues(const TArray<float>& ValueArray, float& BarHeightScalerResult, float& BarPaddingResult,
+		const float MaxHeight);
 
 	// Create BarChart Function
 	UFUNCTION()
 	bool CreateBar(const TArray<float>& ValueArray, const TArray<FString>& LabelArray, const int BarSpacing,
-		const float AverageHeight, const float BarHeightScaler);
+		const float BarPaddingScaler, const float BarHeightScaler);
 
 	// BP BarBase Actor Source to Display 
 	UPROPERTY(VisibleAnywhere, Category = "Chart")
@@ -70,10 +70,10 @@ public:
 	void GenerateBarChart(const FShapeChartData& CopiedData);
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
-	USplineComponent* SplineComponent;
+	USplineComponent* SplineComponent_length;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
-	UArrowComponent* ArrowComponent;
+	USplineComponent* SplineComponent_height;
 
 	// Set BP BarBase Actor Source to Display 
 	UFUNCTION()

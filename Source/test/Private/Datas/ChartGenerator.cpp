@@ -2,7 +2,6 @@
 
 
 #include "Datas/ChartGenerator.h"
-#include "Components/ArrowComponent.h"
 #include "Components/SplineComponent.h"
 #include "Datas/BarBaseActor.h"
 #include "Algo/MaxElement.h"
@@ -11,6 +10,10 @@
 // 기본 차트 베이스 초기화
 UChartGenerator::UChartGenerator()
 {
+	ChildActorContainComponent= CreateDefaultSubobject<USceneComponent>(TEXT("childActorContainComponent"));
+	ChildActorContainComponent->SetupAttachment(this);
+	UE_LOG(LogTemp, Log, TEXT("%s"), *(GetAttachmentRoot()->GetName()));
+	ChildActorContainComponent->SetMobility(EComponentMobility::Movable);
 }
 
 void UChartGenerator::BeginPlay()
@@ -42,13 +45,12 @@ void UChartGenerator::ClearChildrenActors()
 UBarGenerator::UBarGenerator()
 {
 
-	SplineComponent_length = CreateDefaultSubobject<USplineComponent>(TEXT("SplineComponent"));
-	SplineComponent_length->SetupAttachment(RootMeshComponent);
+	SplineComponent_length = CreateDefaultSubobject<USplineComponent>(TEXT("LengthSplineComponent"));
+	SplineComponent_length->SetMobility(EComponentMobility::Movable);
 
 	SplineComponent_height = CreateDefaultSubobject<USplineComponent>(TEXT("HeightSplineComponent"));
-	SplineComponent_height->SetupAttachment(RootMeshComponent);
 	SplineComponent_height->SetRelativeRotation(FRotator(90.f, 0.f, 0.f));
-	
+	SplineComponent_height->SetMobility(EComponentMobility::Movable);
 }
 
 void UBarGenerator::SetBarSourceActor(const TSubclassOf<ABarBaseActor>& SourceActor)
@@ -129,7 +131,7 @@ bool UBarGenerator::CreateBar(const TArray<float>& ValueArray, const TArray<FStr
 		if (NewChildActorComponent)
 		{
 			// 자손 컴포넌트 부착
-			NewChildActorComponent->SetupAttachment(RootMeshComponent);
+			NewChildActorComponent->SetupAttachment(ChildActorContainComponent);
 
 			//자손 액터 클래스 설정
 			NewChildActorComponent->SetChildActorClass(BarBaseActorBPClass);

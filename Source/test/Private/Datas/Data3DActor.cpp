@@ -24,7 +24,6 @@ AData3DActor::AData3DActor()
 
 	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
 	BaseMesh->SetupAttachment(RootComponent);
-
 }
 
 // Called when the game starts or when spawned
@@ -155,22 +154,18 @@ void AData3DActor::Tick(float DeltaTime)
 /// </summary>
 
 AData3DActorBar::AData3DActorBar()
+	: Super()
 {
-
 	BarGeneratorComponent = CreateDefaultSubobject<UBarGenerator>(TEXT("barGeneratorComponent"));
-	BarGeneratorComponent->SetupAttachment(RootComponent);
-
-	// 텍스트로 블루프린트 경로 하드코딩함. 나중에 바꿔야
-	/*static ConstructorHelpers::FClassFinder<ABarBaseActor> ActorClassFinder(TEXT("Game/Data/BP_BarBaseActor01"));
-	if (ActorClassFinder.Succeeded())
+	if (RootComponent)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Default Bar Source Blueprint set "));
-		BarBaseActorBPClass = ActorClassFinder.Class;
+		// 처음에는 ChartGenerator 생성자에서 각각 컴포넌트 붙였으나, 계층 구조만 변경될 뿐 실제로 붙지 않는 문제 발생.
+		// -> 액터에서 직접 컴포넌트의 구성 컴포넌트들 액터의 RootComponent에 Attach
+		BarGeneratorComponent->SetupAttachment(RootComponent);
+		BarGeneratorComponent->SplineComponent_height->SetupAttachment(BarGeneratorComponent);
+		BarGeneratorComponent->SplineComponent_length->SetupAttachment(BarGeneratorComponent);
+		BarGeneratorComponent->ChildActorContainComponent->SetupAttachment(BarGeneratorComponent);
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Default Bar Source Blueprint set Failed"));
-	}*/
 }
 
 void AData3DActorBar::SetDataClassInstance()

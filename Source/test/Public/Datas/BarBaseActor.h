@@ -6,7 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "BarBaseActor.generated.h"
 
-
 class UTextRenderComponent;
 class UTimelineComponent;
 class UProceduralMeshComponent;
@@ -17,17 +16,12 @@ class TEST_API ABarBaseActor : public AActor
 	GENERATED_BODY()
 
 private:
+
 	UPROPERTY()
 	UProceduralMeshComponent* ProcMeshComponent;
 
 	UPROPERTY()
 	UTimelineComponent* BarAnimationTimeline;
-
-	UPROPERTY()
-	UTextRenderComponent* TextRenderComponentValue;
-
-	UPROPERTY()
-	UTextRenderComponent* TextRenderComponentLabel;
 
 	// TimeLine Animation Binding Function
 	UFUNCTION()
@@ -42,12 +36,18 @@ public:
 	ABarBaseActor();
 
 	// Bar Procedural Mesh Material
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Material")
+	UPROPERTY(EditAnywhere, Category = "Material")
 	UMaterialInstance* MeshMaterial;
 
 	// Bar Generate Animation Curve
 	UPROPERTY(EditAnywhere, Category = "Chart")
 	UCurveFloat* AnimationCurve;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Chart")
+	UTextRenderComponent* TextRenderComponentValue;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Chart")
+	UTextRenderComponent* TextRenderComponentLabel;
 
 	// Text Mesh Color
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")

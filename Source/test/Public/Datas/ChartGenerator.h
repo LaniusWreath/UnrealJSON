@@ -17,9 +17,6 @@ class TEST_API UChartGenerator : public USceneComponent
 	GENERATED_BODY()
 
 protected:
-	
-	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* RootMeshComponent;
 
 	// This Array contains Chart Base BP Actor 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
@@ -32,6 +29,9 @@ protected:
 
 public:
 	UChartGenerator();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	USceneComponent* ChildActorContainComponent;
 
 };
 
@@ -46,7 +46,7 @@ class UBarGenerator : public UChartGenerator
 private:
 	// For Visually Modulation Bar Chart with Deviagtion 
 	float CustomScaleValue = 0.9;
-	float CustomPaddingScaleValue = 0.01;
+	float CustomPaddingScaleValue = 0.015;
 
 	// Chart Value PreProcess function
 	UFUNCTION()
@@ -69,16 +69,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Chart")
 	void GenerateBarChart(const FShapeChartData& CopiedData);
 
-	UPROPERTY(VisibleAnywhere, Category = "Component")
-	USplineComponent* SplineComponent_length;
-
-	UPROPERTY(VisibleAnywhere, Category = "Component")
-	USplineComponent* SplineComponent_height;
-
 	// Set BP BarBase Actor Source to Display 
 	UFUNCTION()
 	void SetBarSourceActor(const TSubclassOf<ABarBaseActor>& SourceActor);
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	USplineComponent* SplineComponent_length;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	USplineComponent* SplineComponent_height;
 };
 
 UCLASS(Blueprintable)

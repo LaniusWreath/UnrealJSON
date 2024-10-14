@@ -48,7 +48,6 @@ ABarBaseActor::ABarBaseActor()
 	// 텍스트 렌더러가 메쉬에서 얼마나 떨어져있는지, 일단 하드코딩, 나중에 수정할 것
 	//TextRenderComponentLabel->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
 	//TextRenderComponentLabel->SetRelativeLocation(FVector::ZeroVector);
-
 }
 
 // Called when the game starts or when spawned

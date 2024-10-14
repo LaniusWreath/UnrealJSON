@@ -22,7 +22,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
 	UStaticMeshComponent* BaseMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -68,9 +68,7 @@ class AData3DActorBar : public AData3DActor
 	GENERATED_BODY()
 
 private:
-	// Controler Component for Generating 3D Bar Chart 
-	UPROPERTY()
-	UBarGenerator* BarGeneratorComponent;
+	
 
 protected:
 	virtual void SetDataClassInstance() override;
@@ -79,8 +77,12 @@ protected:
 public:
 	AData3DActorBar();
 
+	// Controler Component for Generating 3D Bar Chart 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UBarGenerator* BarGeneratorComponent;
+
 	// Select Bar Blueprint Actor Source to Generate
-	UPROPERTY(EditAnywhere, BlueprintReadWrite ,Category = "Chart")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly ,Category = "Chart")
 	TSubclassOf<ABarBaseActor> BarBaseActorBPClass;
 
 };

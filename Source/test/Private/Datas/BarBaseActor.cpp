@@ -9,8 +9,6 @@
 // Sets default values
 ABarBaseActor::ABarBaseActor()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	//PrimaryActorTick.bCanEverTick = true;
 
 	ProcMeshComponent = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
 	RootComponent = ProcMeshComponent;
@@ -20,11 +18,6 @@ ABarBaseActor::ABarBaseActor()
 	ProcMeshComponent->SetCanEverAffectNavigation(false);
 	BarAnimationTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("BarAnimationTimeline"));
 
-	// 에디터상에서도 틱 계속 돌아가게끔. 추후 성능 모니터링 필요.
-	//PrimaryActorTick.bCanEverTick = true;
-	//PrimaryActorTick.bStartWithTickEnabled = true;
-	//PrimaryActorTick.bTickEvenWhenPaused = true;
-
 	// 텍스트 렌더러 - 값
 	TextRenderComponentValue = CreateDefaultSubobject<UTextRenderComponent>(TEXT("TextRenderComponentValue"));
 	TextRenderComponentValue->SetupAttachment(RootComponent);
@@ -32,11 +25,6 @@ ABarBaseActor::ABarBaseActor()
 	// 텍스트 피벗을 가운데로 설정
 	TextRenderComponentValue->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
 	TextRenderComponentValue->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
-
-	// 텍스트의 위치를 부모의 위치로 설정
-	//TextRenderComponentValue->SetRelativeLocation(FVector::ZeroVector);
-	//TextRenderComponentValue->SetRelativeRotation(FRotator(0, 90, 0));
-
 	
 	// 텍스트 렌더러 - 라벨
 	TextRenderComponentLabel = CreateDefaultSubobject<UTextRenderComponent>(TEXT("TextRenderComponentLabel")); 
@@ -44,10 +32,6 @@ ABarBaseActor::ABarBaseActor()
 
 	TextRenderComponentLabel->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
 	TextRenderComponentLabel->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
-	//TextRenderComponentLabel->SetRelativeRotation(FRotator(0, 90, 0));
-	// 텍스트 렌더러가 메쉬에서 얼마나 떨어져있는지, 일단 하드코딩, 나중에 수정할 것
-	//TextRenderComponentLabel->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
-	//TextRenderComponentLabel->SetRelativeLocation(FVector::ZeroVector);
 }
 
 // Called when the game starts or when spawned
@@ -81,43 +65,72 @@ void ABarBaseActor::CreateBarMesh(float BarHeight)
 	Vertices.Add(FVector(-w, w, BarHeight));
 
 	// 트라이앵글
-	Triangles.Append({ 0,1,2,0,2,3 });	// 밑면
-	Triangles.Append({ 4,7,6,4,6,5 });	// 윗면
-	Triangles.Append({ 2,6,7,2,7,3 });	// 앞
-	Triangles.Append({ 1,5,6,1,6,2 });	// 오른쪽
-	Triangles.Append({ 0,4,5,0,5,1});	// 뒤
-	Triangles.Append({ 3,7,4,3,4,0 });	// 왼쪽
+	Triangles.Append({ 4,6,5 });	// 밑면
+	Triangles.Append({ 4,7,6 });	
 
-	// 노멀 (법선 벡터)
-	Normals.Append({ FVector(0, 0, -1), FVector(0, 0, -1), FVector(0, 0, -1), FVector(0, 0, -1), FVector(0, 0, -1), FVector(0, 0, -1) });
-	Normals.Append({ FVector(0, 0, 1), FVector(0, 0, 1), FVector(0, 0, 1), FVector(0, 0, 1), FVector(0, 0, 1), FVector(0, 0, 1) });
-	Normals.Append({ FVector(0, 1, 0), FVector(0, 1, 0), FVector(0, 1, 0), FVector(0, 1, 0), FVector(0, 1, 0), FVector(0, 1, 0) });
-	Normals.Append({ FVector(1, 0, 0), FVector(1, 0, 0), FVector(1, 0, 0), FVector(1, 0, 0), FVector(1, 0, 0), FVector(1, 0, 0) });
-	Normals.Append({ FVector(0, -1, 0), FVector(0, -1, 0), FVector(0, -1, 0), FVector(0, -1, 0), FVector(0, -1, 0), FVector(0, -1, 0) });
-	Normals.Append({ FVector(-1, 0, 0), FVector(-1, 0, 0), FVector(-1, 0, 0), FVector(-1, 0, 0), FVector (- 1, 0, 0), FVector(-1, 0, 0)});
+	Triangles.Append({ 0,1,2 });	// 윗면
+	Triangles.Append({ 0,2,3 });	
 
+	Triangles.Append({ 0,3,7 });	// 뒤
+	Triangles.Append({ 0,7,4 });
+
+	Triangles.Append({ 1,5,6 });	// 앞
+	Triangles.Append({ 1,6,2 });	
+
+	Triangles.Append({ 3,2,6 });	// 왼쪽
+	Triangles.Append({ 3,6,7 });	
+
+	Triangles.Append({ 0,4,5 });	// 오른쪽
+	Triangles.Append({ 0,5,1 });	
+
+	// 노멀 초기화
+	Normals.Init(FVector::ZeroVector, Vertices.Num());
+
+	// 각 삼각형의 노멀 계산
+	for (int32 i = 0; i < Triangles.Num(); i += 3)
+	{
+		int32 Index0 = Triangles[i];
+		int32 Index1 = Triangles[i + 1];
+		int32 Index2 = Triangles[i + 2];
+
+		FVector Vertex0 = Vertices[Index0];
+		FVector Vertex1 = Vertices[Index1];
+		FVector Vertex2 = Vertices[Index2];
+
+		FVector Edge1 = Vertex1 - Vertex0;
+		FVector Edge2 = Vertex2 - Vertex0;
+
+		FVector Normal = FVector::CrossProduct(Edge1, Edge2).GetSafeNormal();
+
+		Normals[Index0] += Normal;
+		Normals[Index1] += Normal;
+		Normals[Index2] += Normal;
+	}
+
+	// 노멀 벡터 정규화
+	for (FVector& Normal : Normals)
+	{
+		Normal.Normalize();
+	}
+
+	// UV 좌표 설정
+	UVs.Init(FVector2D::ZeroVector, Vertices.Num());
 
 	// UV (트라이앵글)의 각 꼭짓점 부분을 2D 사각형으로 매핑)
-	UVs.Add(FVector2D(0.f, 0.f));
-	UVs.Add(FVector2D(1.f, 0.f));
-	UVs.Add(FVector2D(1.f, 0.f));
-	UVs.Add(FVector2D(0.f, 1.f));
-	UVs.Add(FVector2D(0.f, 0.f));
-	UVs.Add(FVector2D(1.f, 0.f));
-	UVs.Add(FVector2D(1.f, 1.f));
-	UVs.Add(FVector2D(0.f, 1.f));
+	UVs[4] = FVector2D(0.f, 0.f);
+	UVs[5] = FVector2D(1.f, 0.f);
+	UVs[6] = FVector2D(1.f, 1.f);
+	UVs[7] = FVector2D(0.f, 1.f);
+
+	// 뒤쪽 면
+	UVs[0] = FVector2D(1.f, 0.f);
+	UVs[1] = FVector2D(0.f, 0.f);
+	UVs[2] = FVector2D(0.f, 1.f);
+	UVs[3] = FVector2D(1.f, 1.f);
 
 
-	// 탄젠트 (법선에 직교하는 벡터 + UV 평면의 U축을 따라가는 벡터)
-	Tangents.Add(FProcMeshTangent(1, 0, 0));
-	Tangents.Add(FProcMeshTangent(1, 0, 0));
-	Tangents.Add(FProcMeshTangent(1, 0, 0));
-	Tangents.Add(FProcMeshTangent(1, 0, 0));
-
-	Tangents.Add(FProcMeshTangent(1, 0, 0));
-	Tangents.Add(FProcMeshTangent(1, 0, 0));
-	Tangents.Add(FProcMeshTangent(1, 0, 0));
-	Tangents.Add(FProcMeshTangent(1, 0, 0));
+	// 탄젠트 설정
+	Tangents.Init(FProcMeshTangent(1.f, 0.f, 0.f), Vertices.Num());
 
 	// 프로시저럴 메쉬
 	ProcMeshComponent->CreateMeshSection(0, Vertices, Triangles, Normals, UVs, TArray<FColor>(), Tangents, true);

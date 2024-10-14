@@ -35,7 +35,7 @@ ABarBaseActor::ABarBaseActor()
 
 	// 텍스트의 위치를 부모의 위치로 설정
 	//TextRenderComponentValue->SetRelativeLocation(FVector::ZeroVector);
-	TextRenderComponentValue->SetRelativeRotation(FRotator(0, 90, 0));
+	//TextRenderComponentValue->SetRelativeRotation(FRotator(0, 90, 0));
 
 	
 	// 텍스트 렌더러 - 라벨
@@ -44,7 +44,7 @@ ABarBaseActor::ABarBaseActor()
 
 	TextRenderComponentLabel->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
 	TextRenderComponentLabel->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
-	TextRenderComponentLabel->SetRelativeRotation(FRotator(0, 90, 0));
+	//TextRenderComponentLabel->SetRelativeRotation(FRotator(0, 90, 0));
 	// 텍스트 렌더러가 메쉬에서 얼마나 떨어져있는지, 일단 하드코딩, 나중에 수정할 것
 	//TextRenderComponentLabel->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
 	//TextRenderComponentLabel->SetRelativeLocation(FVector::ZeroVector);

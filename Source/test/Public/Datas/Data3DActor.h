@@ -22,15 +22,11 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
+	UPROPERTY(BlueprintReadWrite, Category = "Chart")
 	UStaticMeshComponent* BaseMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chart")
 	FString CurrentChartType;
-
-	// Chart Generator Component Class Generating what Chart Type. This Member Decides How the Chart Type to Be. 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChartSettings", meta = (DisplayPriority = 0))
-	TSubclassOf<UChartGenerator> ChartGeneratorComponentClass;
 
 	// Initializing Data Manager Getting from Game Instance
 	UFUNCTION()
@@ -78,7 +74,7 @@ public:
 	AData3DActorBar();
 
 	// Controler Component for Generating 3D Bar Chart 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chart")
 	UBarGenerator* BarGeneratorComponent;
 
 	// Select Bar Blueprint Actor Source to Generate

@@ -35,21 +35,21 @@ public:
 	// Sets default values for this actor's properties
 	ABarBaseActor();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chart")
+	UPROPERTY()
 	UProceduralMeshComponent* ProcMeshComponent;
 
 	// Bar Procedural Mesh Material
-	UPROPERTY(EditAnywhere, Category = "Material")
+	UPROPERTY(EditAnywhere, Category = "Chart")
 	UMaterialInstance* MeshMaterial;
 
 	// Bar Generate Animation Curve
 	UPROPERTY(EditAnywhere, Category = "Chart")
 	UCurveFloat* AnimationCurve;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Chart")
+	UPROPERTY()
 	UTextRenderComponent* TextRenderComponentValue;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Chart")
+	UPROPERTY()
 	UTextRenderComponent* TextRenderComponentLabel;
 
 	// Text Mesh Color
@@ -60,7 +60,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
 	float Width_bar = 100.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cahrt")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
 	int UnitSize = 1;
 
 	// Bar Text Unit Size : Label

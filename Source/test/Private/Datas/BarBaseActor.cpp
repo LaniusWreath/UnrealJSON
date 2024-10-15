@@ -5,13 +5,16 @@
 #include "ProceduralMeshComponent.h"
 #include "Components/TimelineComponent.h"
 #include "Components/TextRenderComponent.h"
+#include "KismetProceduralMeshLibrary.h"
 
 // Sets default values
 ABarBaseActor::ABarBaseActor()
 {
+	DefaultSceneRootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
+	RootComponent = DefaultSceneRootComponent;
 
 	ProcMeshComponent = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
-	RootComponent = ProcMeshComponent;
+	ProcMeshComponent->SetupAttachment(RootComponent);
 
 	// Procedural Mesh Component를 Navigation 시스템에서 제외. 경로탐색이나 ai상호작용이 필요 없는 경우, 꺼도 좋음. 
 	// 안끄면 Navigation system에서 화냄. (계속 감시중)
@@ -49,8 +52,8 @@ void ABarBaseActor::CreateBarMesh(float BarHeight)
 	TArray<FVector2D> UVs;
 	TArray<FProcMeshTangent> Tangents;
 	
-	float BarWidth = Width_bar;
-	float w = Width_bar / 2;
+	float BarWidth = Width_bar * UnitSize;
+	float w = (BarWidth / 2);
 
 	UE_LOG(LogTemp, Log, TEXT("BarBaseActor : CreateBarMesh : BarHeight= %f, BarWidth : %f"), BarHeight, BarWidth);
 
@@ -86,7 +89,7 @@ void ABarBaseActor::CreateBarMesh(float BarHeight)
 	// 노멀 초기화
 	Normals.Init(FVector::ZeroVector, Vertices.Num());
 
-	// 각 삼각형의 노멀 계산
+	// 각 삼각형 노멀 계산
 	for (int32 i = 0; i < Triangles.Num(); i += 3)
 	{
 		int32 Index0 = Triangles[i];
@@ -113,21 +116,33 @@ void ABarBaseActor::CreateBarMesh(float BarHeight)
 		Normal.Normalize();
 	}
 
-	// UV 좌표 설정
-	UVs.Init(FVector2D::ZeroVector, Vertices.Num());
+	// UV0
+	TArray<FVector2D> UV0;
+	UV0.Init(FVector2D::ZeroVector, Vertices.Num());
 
-	// UV (트라이앵글)의 각 꼭짓점 부분을 2D 사각형으로 매핑)
-	UVs[4] = FVector2D(0.f, 0.f);
-	UVs[5] = FVector2D(1.f, 0.f);
-	UVs[6] = FVector2D(1.f, 1.f);
-	UVs[7] = FVector2D(0.f, 1.f);
+	UV0[0] = FVector2D(0.f, 0.f);
+	UV0[1] = FVector2D(1.f, 0.f);
+	UV0[2] = FVector2D(1.f, 1.f);
+	UV0[3] = FVector2D(0.f, 1.f);
 
-	// 뒤쪽 면
-	UVs[0] = FVector2D(1.f, 0.f);
-	UVs[1] = FVector2D(0.f, 0.f);
-	UVs[2] = FVector2D(0.f, 1.f);
-	UVs[3] = FVector2D(1.f, 1.f);
+	// UV1
+	TArray<FVector2D> UV1;
+	UV1.Init(FVector2D::ZeroVector, Vertices.Num());
 
+	UV1[0] = FVector2D(0.f, 0.f);
+	UV1[1] = FVector2D(0.25f, 0.f);
+	UV1[2] = FVector2D(0.25f, 0.25f);
+	UV1[3] = FVector2D(0.f, 0.25f);
+
+	/*TArray<TArray<FVector2D>> UVs;
+	for (int i = 0; i < 4; i++)
+	{
+		UVs.Add(UV0[i]);
+	}
+	for (int i = 0; i < 4; i++)
+	{
+		UVs.Add(UV1[i]);
+	}*/
 
 	// 탄젠트 설정
 	Tangents.Init(FProcMeshTangent(1.f, 0.f, 0.f), Vertices.Num());
@@ -141,10 +156,43 @@ void ABarBaseActor::CreateBarMesh(float BarHeight)
 	}
 }
 
+void ABarBaseActor::CreateBoxMesh(float BarHeight)
+{
+	// 필요한 배열 선언
+	TArray<FVector> Vertices;
+	TArray<int32> Triangles;
+	TArray<FVector> Normals;
+	TArray<FVector2D> UV0;
+	TArray<FProcMeshTangent> Tangents;
+
+	float BarWidth = UnitSize*Width_bar;
+	float w = BarWidth / 2;
+
+	// 박스의 크기 설정 (박스 너비)
+	FVector BoxRadius(w, w, w); // 박스의 절반 크기
+
+	// 박스 메쉬 생성
+	UKismetProceduralMeshLibrary::GenerateBoxMesh(BoxRadius, Vertices, Triangles, Normals, UV0, Tangents);
+
+	// 박스 높이만큼 스케일 계산해서 높이 올림.
+	float zScaler = BarHeight / (UnitSize*BarWidth);
+	UE_LOG(LogTemp, Log, TEXT("ABarBaseActor : Calculate ZScaler : zScaler : %f, BarHeight : %f, UnitSIZE : %d, BarWidth : %f"), zScaler, BarHeight, UnitSize, BarWidth);
+	//UE_LOG(LogTemp, Log, TEXT("BarBaseActor : zScaler is %f"), zScaler);
+	ProcMeshComponent->SetWorldScale3D(FVector(1.f, 1.f, zScaler));
+	ProcMeshComponent->AddWorldOffset(FVector(0, 0, (BarHeight / 2)));
+
+	// Procedural Mesh Component에 메쉬 적용
+	ProcMeshComponent->CreateMeshSection_LinearColor(0, Vertices, Triangles, Normals, UV0, {}, Tangents, true);
+
+	if (MeshMaterial)
+	{
+		ProcMeshComponent->SetMaterial(0, MeshMaterial);
+	}
+}
+
 // 라벨 텍스트 렌더러 설정
 void ABarBaseActor::InitializeTextMeshLabel(const FString& LabelName)
 {
-	int padding = 10;
 
 	// 텍스트 내용
 	TextRenderComponentLabel->SetText(FText::FromString(LabelName));
@@ -153,10 +201,10 @@ void ABarBaseActor::InitializeTextMeshLabel(const FString& LabelName)
 	TextRenderComponentLabel->SetTextRenderColor(TextColor);
 
 	// 텍스트 크기
-	TextRenderComponentLabel->SetWorldSize(TextSizeUnit_label);
+	//TextRenderComponentLabel->SetWorldSize(UnitSize * TextSizeUnit_label);
 
 	// 위치 
-	TextRenderComponentLabel->SetRelativeLocation(FVector(0.f, 0.f,-padding));
+	//TextRenderComponentLabel->SetRelativeLocation(FVector(0.f, 0.f,-1*(UnitSize*TextSizeUnit_label)/ 2));
 
 }
 
@@ -172,10 +220,11 @@ void ABarBaseActor::InitializeTextMeshValue(const float& FloatValue, const float
 	TextRenderComponentValue->SetTextRenderColor(TextColor);
 
 	// 텍스트 크기
-	TextRenderComponentValue->SetWorldSize(TextSizeUnit_value);
+	//TextRenderComponentValue->SetWorldSize(UnitSize*TextSizeUnit_value);
 
 	// 위치
-	TextRenderComponentValue->SetRelativeLocation(FVector(0.f, 0.f, BarHeight+padding));
+	TextRenderComponentValue->AddWorldOffset(FVector(0.f, 0.f, BarHeight + (TextRenderComponentValue->WorldSize)/2 
+		+ padding));
 }
 
 // 애니메이션 실행 제어

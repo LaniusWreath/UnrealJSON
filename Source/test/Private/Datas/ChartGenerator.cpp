@@ -67,6 +67,7 @@ void UBarGenerator::GenerateBarChart(const FShapeChartData& CopiedData)
 
 	// 차트 최대 높이
 	float MaxHeight = SplineComponent_height->GetSplineLength();
+	UE_LOG(LogTemp, Log, TEXT("ChartGenerator : SplineHeight is %f"), MaxHeight);
 
 	TArray<float> ValueArray = CopiedData.Values;
 	TArray<FString> LabelAarray = CopiedData.Labels;
@@ -78,6 +79,7 @@ void UBarGenerator::GenerateBarChart(const FShapeChartData& CopiedData)
 	float BarHeightScaler = 0;
 	float BarPadding = 0;
 	PrepareBarValues(ValueArray, BarHeightScaler, BarPadding, MaxHeight);
+	UE_LOG(LogTemp, Log, TEXT("ChartGenerator: PrepareBarValues() result, BarHeightScaler : %f"), BarHeightScaler);
 
 	// 바 메시 생성
 	bool isGenerateDone = CreateBar(ValueArray, LabelAarray, SplineSpacing, BarPadding, BarHeightScaler);
@@ -103,7 +105,6 @@ void UBarGenerator::PrepareBarValues(const TArray<float>& ValueArray, float& Bar
 	UE_LOG(LogTemp, Log, TEXT("ChartGenerator : Preparing Bar Height Scaler : %f * %f / %f"), MaxHeight, CustomScaleValue, Range);
 
 	BarPaddingResult = MaxHeight * CustomPaddingScaleValue;
-
 	// 로그 스케일링, 정규화 따로 파라미터 빼서 고를 수 있게 할 것
 }
 
@@ -118,8 +119,9 @@ bool UBarGenerator::CreateBar(const TArray<float>& ValueArray, const TArray<FStr
 	for (int32 i = 0; i < Numbers; i++)
 	{
 		float CurrentValue = ValueArray[i];
-		float ScaledHeight = CurrentValue * BarHeightScaler + BarPaddingScaler ;
-		UE_LOG(LogTemp, Log, TEXT("ChartGenerator : CurrentValue : %f, ScaledHeight : %f"), CurrentValue, ScaledHeight);
+		float ScaledHeight = CurrentValue * BarHeightScaler;
+		UE_LOG(LogTemp, Log, TEXT("ChartGenerator : CurrentValue : %f, BarHeightScaler : %f, ScaledHeight : %f"), 
+			CurrentValue, BarHeightScaler ,ScaledHeight);
 		float Distance = i * BarSpacing;
 
 		FVector BarLocation = SplineComponent_length->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::Local);
@@ -139,8 +141,8 @@ bool UBarGenerator::CreateBar(const TArray<float>& ValueArray, const TArray<FStr
 			// 자손 액터 생성
 			NewChildActorComponent->CreateChildActor();
 
-			UE_LOG(LogTemp, Log, TEXT("ChartGenerator : Creating Bar Child Object : %s"), *NewChildActorComponent->GetChildActorClass()
-			->GetName());
+			UE_LOG(LogTemp, Log, TEXT("ChartGenerator : Creating Bar Child Object : %s"), 
+				*NewChildActorComponent->GetChildActorClass()->GetName());
 
 			// 배열에 추가
 			ChildActorComponents.Add(NewChildActorComponent);
@@ -152,9 +154,9 @@ bool UBarGenerator::CreateBar(const TArray<float>& ValueArray, const TArray<FStr
 				if (ChildBar)
 				{
 					// 바 프로시저럴 메쉬 생성
-					ChildBar->CreateBarMesh(ScaledHeight);
+					ChildBar->CreateBoxMesh(ScaledHeight);
 					// 바 라벨 텍스트 렌더러 생성
-					ChildBar->InitializeTextMeshLabel(LabelName); //여기부터 하면 됨
+					ChildBar->InitializeTextMeshLabel(LabelName); 
 					// 바 값 텍스트 렌더러 생성
 					ChildBar->InitializeTextMeshValue(CurrentValue, ScaledHeight);
 					// 이동

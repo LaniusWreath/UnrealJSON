@@ -18,14 +18,14 @@ class TEST_API ABarBaseActor : public AActor
 private:
 
 	UPROPERTY()
-	UProceduralMeshComponent* ProcMeshComponent;
-
-	UPROPERTY()
 	UTimelineComponent* BarAnimationTimeline;
 
 	// TimeLine Animation Binding Function
 	UFUNCTION()
 	void OnAnimationUpdate(float Value);
+
+	UPROPERTY()
+	USceneComponent* DefaultSceneRootComponent;
 
 protected:
 	// Called when the game starts or when spawned
@@ -34,6 +34,9 @@ protected:
 public:	
 	// Sets default values for this actor's properties
 	ABarBaseActor();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chart")
+	UProceduralMeshComponent* ProcMeshComponent;
 
 	// Bar Procedural Mesh Material
 	UPROPERTY(EditAnywhere, Category = "Material")
@@ -55,15 +58,14 @@ public:
 
 	// Bar Mesh Width
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
-	float Width_bar = 10.f;
+	float Width_bar = 100.f;
 
-	// Bar Text Unit Size : Value
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
-	float TextSizeUnit_value = 10;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cahrt")
+	int UnitSize = 1;
 
 	// Bar Text Unit Size : Label
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
-	float TextSizeUnit_label = 10;
+	float ValueTextPadding = 15.f;
 
 	// Animation Control Function
 	UFUNCTION()
@@ -72,6 +74,10 @@ public:
 	// Create Procedural Mesh
 	UFUNCTION(BlueprintCallable, Category = "Chart")
 	void CreateBarMesh(float BarHeight);
+
+	// Create Procedural Mesh
+	UFUNCTION(BlueprintCallable, Category = "Chart")
+	void CreateBoxMesh(float BarHeight);
 
 	// Initialize Lbel Text Mesh
 	UFUNCTION(BlueprintCallable, Category = " Chart")

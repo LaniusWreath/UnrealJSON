@@ -45,8 +45,8 @@ class UBarGenerator : public UChartGenerator
 
 private:
 	// For Visually Modulation Bar Chart with Deviagtion 
-	float CustomScaleValue = 0.9;
-	float CustomPaddingScaleValue = 0.015;
+	float CustomScaleValue = 1;
+	float CustomPaddingScaleValue = 1;
 
 	// Chart Value PreProcess function
 	UFUNCTION()

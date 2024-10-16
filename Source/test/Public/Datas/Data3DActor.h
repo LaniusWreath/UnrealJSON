@@ -26,7 +26,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Chart")
 	USceneComponent* RootSceneComponent;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Chart")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
 	UStaticMeshComponent* BaseMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chart")
@@ -72,7 +72,7 @@ class AData3DActorBar : public AData3DActor
 
 private:
 	UFUNCTION()
-	void SetChartLabelText();
+	void SetChartDefaultTexts();
 
 protected:
 	virtual void SetDataClassInstance() override;

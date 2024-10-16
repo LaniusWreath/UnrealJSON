@@ -63,6 +63,18 @@ public:
 	{
 		return ShapeChartData.ChartTitle;
 	}
+
+	// Getter Chart XAxis Name String
+	const FString& GetChartXName() const
+	{
+		return ShapeChartData.XName;
+	}
+
+	// Getter Chart YAxis Name String
+	const FString& GetChartYName() const
+	{
+		return ShapeChartData.YName;
+	}
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////

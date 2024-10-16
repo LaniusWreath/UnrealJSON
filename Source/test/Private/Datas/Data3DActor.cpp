@@ -28,6 +28,8 @@ AData3DActor::AData3DActor()
 
 	TextRenderComponent_chartTitle = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Text_title"));
 	TextRenderComponent_chartTitle->SetupAttachment(RootSceneComponent);
+	TextRenderComponent_chartTitle->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
+	TextRenderComponent_chartTitle->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
 }
 
 // Called when the game starts or when spawned
@@ -79,12 +81,17 @@ AData3DActorBar::AData3DActorBar()
 	}
 	TextRenderComponent_chartXaxisName = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Text_xAxis"));
 	TextRenderComponent_chartXaxisName->SetupAttachment(RootSceneComponent);
+	TextRenderComponent_chartXaxisName->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
+	TextRenderComponent_chartXaxisName->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
+
 	TextRenderComponent_chartYaxisName = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Text_yAxis"));
 	TextRenderComponent_chartYaxisName->SetupAttachment(RootSceneComponent);
+	TextRenderComponent_chartYaxisName->SetHorizontalAlignment(EHorizTextAligment::EHTA_Center);
+	TextRenderComponent_chartYaxisName->SetVerticalAlignment(EVerticalTextAligment::EVRTA_TextCenter);
 }
 
-// 차트 타이틀 초기화 함수
-void AData3DActorBar::SetChartLabelText()
+// 차트 타이틀, X축, Y축 이름 초기화 함수
+void AData3DActorBar::SetChartDefaultTexts()
 {
 	if (DataClassInstance)
 	{
@@ -92,6 +99,12 @@ void AData3DActorBar::SetChartLabelText()
 		FString ChartTitle = TempCastedDataClass->GetChartTitle();
 		TextRenderComponent_chartTitle->SetText(FText::FromString(ChartTitle));
 		UE_LOG(LogTemp, Log, TEXT("Data3DActor : Chart Title : %s"), *ChartTitle);
+
+		FString ChartXAxisName = TempCastedDataClass->GetChartXName();
+		TextRenderComponent_chartXaxisName->SetText(FText::FromString(ChartXAxisName));
+
+		FString ChartYAxisName = TempCastedDataClass->GetChartYName();
+		TextRenderComponent_chartYaxisName->SetText(FText::FromString(ChartYAxisName));
 	}
 }
 
@@ -124,7 +137,7 @@ void AData3DActorBar::GenerateChartRoutine()
 		UE_LOG(LogTemp, Warning, TEXT("Data3DActorBar : DataClassInstance is null, SetDataClassInstance"));
 		SetDataClassInstance();
 		// 차트 타이틀 초기화
-		SetChartLabelText();
+		SetChartDefaultTexts();
 	}
 
 	// 생성할 바 소스 액터 BarGenerator에 전달

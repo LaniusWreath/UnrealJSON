@@ -38,15 +38,18 @@ public:
 	// Sets default values for this actor's properties
 	ABarBaseActor();
 
+	// On : Using Procedural Mesh, Off: Using Legacy Static Mesh Component to Generate Chart
 	UPROPERTY(EditAnywhere, Category = "Chart")
 	bool isProceduralMeshUsing;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Chart")
 	UProceduralMeshComponent* ProcMeshComponent;
-
+	
+	// Legacy Static Mesh Component Offset Layer
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Chart")
 	USceneComponent* LegacyActorSceneComponent;
 
+	// Specify Static Mesh to Generate, Don't For Get to Check off isProceduralMeshUsing
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Chart")
 	UStaticMeshComponent* LegacyStaticMeshComponent;
 
@@ -58,15 +61,11 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Chart")
 	UCurveFloat* AnimationCurve;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Chart")
 	UTextRenderComponent* TextRenderComponentValue;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Chart")
 	UTextRenderComponent* TextRenderComponentLabel;
-
-	// Text Mesh Color
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")
-	FColor TextColor = FColor::Blue;
 
 	// Bar Mesh Width
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chart")

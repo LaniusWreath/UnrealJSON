@@ -107,10 +107,6 @@ void ABarBaseActor::InitializeTextMeshLabel(const FString& LabelName)
 
 	// 텍스트 내용
 	TextRenderComponentLabel->SetText(FText::FromString(LabelName));
-
-	// 텍스트 색상 
-	TextRenderComponentLabel->SetTextRenderColor(TextColor);
-
 }
 
 // 값 텍스트 렌더러 설정
@@ -120,12 +116,6 @@ void ABarBaseActor::InitializeTextMeshValue(const float& FloatValue, const float
 	
 	// 텍스트 내용
 	TextRenderComponentValue->SetText(FText::AsNumber(FloatValue));
-
-	// 텍스트 색상
-	TextRenderComponentValue->SetTextRenderColor(TextColor);
-
-	// 텍스트 크기
-	//TextRenderComponentValue->SetWorldSize(UnitSize*TextSizeUnit_value);
 
 	// 위치
 	TextRenderComponentValue->AddWorldOffset(FVector(0.f, 0.f, BarHeight + (TextRenderComponentValue->WorldSize)/2 

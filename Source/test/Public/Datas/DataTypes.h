@@ -21,29 +21,35 @@ struct FShapeChartData
 {
 	GENERATED_BODY()
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FString ChartTitle;
+
 	// Chart Types : "bar", "line", "pie" .. 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	FString ChartType = "bar";
+	FString ChartType;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	FString XName = "Date";
+	FString XName;
 
 	// Label for X Axis
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TArray<FString> Labels = {"2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04"};
+	TArray<FString> Labels;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	FString YName = "Temperature";
+	FString YName;
 	
 	// Value for Y Axis or Quotiont for PieChart
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TArray<float> Values = { 20.5, 21.0, 19.8, 22.1 };
+	TArray<float> Values;
 };
 
 USTRUCT(BlueprintType)
 struct FXYChartData
 {
 	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FString ChartTitle;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FString XName;
@@ -62,6 +68,9 @@ USTRUCT(BlueprintType)
 struct FXYZChartData
 {
 	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FString ChartTitle;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TArray<FString> Names;

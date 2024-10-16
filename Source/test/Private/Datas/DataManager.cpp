@@ -93,6 +93,7 @@ FDataInstancePair UDataManager::InstancingDataClass(TSharedPtr<FJsonObject>& Dat
 	FString ChartType = Data->GetStringField(TEXT("chartType"));
 	int32 ChartTypeNumber = DataTypes::MapChartTypes[ChartType.ToUpper()];
 	EChartTypes CurChartTypeEnum = DataTypes::MapChartTypes[ChartType];
+	FString ChartTitle = Data->GetStringField(TEXT("chartTitle"));
 
 	switch (CurChartTypeEnum)
 	{
@@ -128,7 +129,7 @@ FDataInstancePair UDataManager::InstancingDataClass(TSharedPtr<FJsonObject>& Dat
 		{
 			YValues.Add(Value->AsNumber());
 		}
-		NewChartBarClass->SetChartData(ChartType, XName, XLabels, YName, YValues);
+		NewChartBarClass->SetChartData(ChartTitle, ChartType, XName, XLabels, YName, YValues);
 
 		FDataInstancePair DataPair(ClassName, NewChartBarClass);
 		

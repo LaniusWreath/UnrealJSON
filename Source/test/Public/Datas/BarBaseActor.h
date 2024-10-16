@@ -20,12 +20,18 @@ private:
 	UPROPERTY()
 	UTimelineComponent* BarAnimationTimeline;
 
+	UPROPERTY()
+	USceneComponent* DefaultSceneRootComponent;
+
+	UPROPERTY()
+	UProceduralMeshComponent* ProcMeshComponent;
+
 	// TimeLine Animation Binding Function
 	UFUNCTION()
 	void OnAnimationUpdate(float Value);
 
-	UPROPERTY()
-	USceneComponent* DefaultSceneRootComponent;
+	UFUNCTION()
+	void CreateLegacyMesh(float BarHeight);
 
 protected:
 	// Called when the game starts or when spawned
@@ -35,8 +41,14 @@ public:
 	// Sets default values for this actor's properties
 	ABarBaseActor();
 
-	UPROPERTY()
-	UProceduralMeshComponent* ProcMeshComponent;
+	UPROPERTY(EditAnywhere, Category = "Chart")
+	bool isProceduralMeshUsing;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Chart")
+	USceneComponent* LegacyActorSceneComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Chart")
+	UStaticMeshComponent* LegacyStaticMeshComponent;
 
 	// Bar Procedural Mesh Material
 	UPROPERTY(EditAnywhere, Category = "Chart")
@@ -73,11 +85,10 @@ public:
 
 	// Create Procedural Mesh
 	UFUNCTION(BlueprintCallable, Category = "Chart")
-	void CreateBarMesh(float BarHeight);
+	void CreateProceduralBoxMesh(float BarHeight);
 
-	// Create Procedural Mesh
 	UFUNCTION(BlueprintCallable, Category = "Chart")
-	void CreateBoxMesh(float BarHeight);
+	void CreateMesh(float BarHeight);
 
 	// Initialize Lbel Text Mesh
 	UFUNCTION(BlueprintCallable, Category = " Chart")
@@ -86,4 +97,6 @@ public:
 	// Initialize Value Text Mesh
 	UFUNCTION(BlueprintCallable, Category = " Chart")
 	void InitializeTextMeshValue(const float& FloatValue, const float& BarHeight);
+
+
 };

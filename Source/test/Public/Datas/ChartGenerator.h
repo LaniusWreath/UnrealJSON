@@ -10,6 +10,8 @@
  * 
  */
 
+class UTextRenderComponent;
+
 // ChartGenerator Abstract Component Class
 UCLASS(Abstract, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class TEST_API UChartGenerator : public USceneComponent

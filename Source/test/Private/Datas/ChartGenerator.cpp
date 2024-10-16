@@ -5,6 +5,7 @@
 #include "Components/SplineComponent.h"
 #include "Datas/BarBaseActor.h"
 #include "Algo/MaxElement.h"
+#include "Components/TextRenderComponent.h"
 
 
 // 기본 차트 베이스 초기화
@@ -44,7 +45,7 @@ void UChartGenerator::ClearChildrenActors()
 
 UBarGenerator::UBarGenerator()
 {
-
+	// 차트 들어가는 각 컴포넌트 인스턴스 생성만, Attach는 Data3DActor에서 할 것
 	SplineComponent_length = CreateDefaultSubobject<USplineComponent>(TEXT("LengthSplineComponent"));
 	SplineComponent_length->SetMobility(EComponentMobility::Movable);
 
@@ -154,7 +155,7 @@ bool UBarGenerator::CreateBar(const TArray<float>& ValueArray, const TArray<FStr
 				if (ChildBar)
 				{
 					// 바 프로시저럴 메쉬 생성
-					ChildBar->CreateBoxMesh(ScaledHeight);
+					ChildBar->CreateMesh(ScaledHeight);
 					// 바 라벨 텍스트 렌더러 생성
 					ChildBar->InitializeTextMeshLabel(LabelName); 
 					// 바 값 텍스트 렌더러 생성

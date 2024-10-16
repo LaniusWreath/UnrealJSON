@@ -22,10 +22,11 @@ const TArray<float>& UShapeChartClass::GetShapeChartDataValues() const
 
 ///////////////////////////////////////// µ•¿Ã≈Õ Set ////////////////////////////////////////////////
 
-bool UShapeChartClass::SetChartData(const FString& ChartTypeName, const FString& XName, const TArray<FString>& Labels, const FString& YName, const TArray<float>& Values)
+bool UShapeChartClass::SetChartData(const FString& ChartTitle, const FString& ChartTypeName, const FString& XName, const TArray<FString>& Labels, const FString& YName, const TArray<float>& Values)
 {
     bool result = true;
 
+    ShapeChartData.ChartTitle = ChartTitle;
     ShapeChartData.ChartType = ChartTypeName;
     ShapeChartData.XName = XName;
     ShapeChartData.Labels = Labels;
@@ -106,10 +107,10 @@ bool UShapeChartBarClass::SetChartData(const FShapeChartData& InputData)
     return result;
 }
 
-bool UShapeChartBarClass::SetChartData(const FString& ChartTypeName, const FString& XName, const TArray<FString>& Labels, const FString& YName, const TArray<float>& Values)
+bool UShapeChartBarClass::SetChartData(const FString& ChartTitle, const FString& ChartTypeName, const FString& XName, const TArray<FString>& Labels, const FString& YName, const TArray<float>& Values)
 {
     bool result = false;
-    if (Super::SetChartData(ChartTypeName, XName, Labels, YName, Values))
+    if (Super::SetChartData(ChartTitle, ChartTypeName, XName, Labels, YName, Values))
     {
         result = true;
     }

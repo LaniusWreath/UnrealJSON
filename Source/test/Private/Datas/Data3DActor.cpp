@@ -11,6 +11,7 @@
 #include "Datas/DataClasses.h"
 #include "Components/SplineComponent.h"
 #include "Components/ArrowComponent.h"
+#include "Components/TextRenderComponent.h"
 
 /// <summary>
 /// BaseActor Functions
@@ -24,6 +25,9 @@ AData3DActor::AData3DActor()
 
 	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
 	BaseMesh->SetupAttachment(RootComponent);
+
+	TextRenderComponent_chartTitle = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Text_title"));
+	TextRenderComponent_chartTitle->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -59,102 +63,9 @@ void AData3DActor::InitilizeDataManager()
 void AData3DActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
-// 애니메이션 수정할 것
-//void AData3DActor::PlayLastChildrenAnimation()
-//{
-//	if (DataManagerPtr)
-//	{
-//		UDataClasses* BaseClass = DataManagerPtr->GetLastChartDataClassInstancePtr();
-//		EChartTypes ECurrentChartType = BaseClass->GetChartType();
-//		UE_LOG(LogTemp, Log, TEXT("Data3DActor : LastChartType is %d"), ECurrentChartType);
-//
-//		switch (ECurrentChartType)
-//		{
-//		case None:
-//			break;
-//		case BAR:
-//		{
-//			for (const UChildActorComponent* ChildActorComponent : ChildActorComponents)
-//			{
-//				if (ChildActorComponent && ChildActorComponent->GetChildActor())
-//				{
-//					ABarBaseActor* BarChildActor = Cast<ABarBaseActor>(ChildActorComponent->GetChildActor());
-//					BarChildActor->PlayBarAnimation();
-//				}
-//			}
-//			break;
-//		}
-//			
-//		case LINE:
-//		{
-//			break;
-//		}
-//
-//		case PIE:
-//		{
-//			break;
-//		}
-//		case XY:
-//		{
-//			break;
-//		}
-//		case XYZ:
-//		{
-//			break;
-//		}
-//		case FREE:
-//		{
-//			break;
-//		}
-//		default:
-//		{
-//			break;
-//		}
-//		}
-//	}
-//}
-
-//void AData3DActor::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
-//{
-//	Super::PostEditChangeProperty(PropertyChangedEvent);
-//
-//	// 속성 이름이 "ComponentClass"인 경우에만 처리
-//	FName PropertyName = (PropertyChangedEvent.Property != nullptr) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
-//	if (PropertyName == GET_MEMBER_NAME_CHECKED(AData3DActor, ChartGeneratorComponentClass))
-//	{
-//		if (ChartGeneratorComponent)
-//		{
-//			ChartGeneratorComponent->DestroyComponent();  // 기존 부모 컴포넌트 삭제
-//			ChartGeneratorComponent = nullptr;  // 포인터 초기화
-//		}
-//
-//		// 선택된 자식 클래스로 새로운 컴포넌트 생성
-//		if (ChartGeneratorComponentClass && ChartGeneratorComponentClass->IsChildOf(UChartGenerator::StaticClass()))
-//		{
-//			ChartGeneratorComponent = NewObject<UChartGenerator>(this, ChartGeneratorComponentClass, TEXT("ParentComponent"));
-//			
-//			UBarGenerator* BarGenerateComponent = Cast<UBarGenerator>(ChartGeneratorComponent);
-//			BarGenerateComponent->SplineComponent
-//
-//			ChartGeneratorComponent->SetupAttachment(RootComponent);
-//			ChartGeneratorComponent->RegisterComponent();
-//
-//			// 자식 클래스의 생성자가 호출되며 필요한 초기화(화살표 컴포넌트 초기화 등)가 실행됨
-//		}
-//
-//	}
-//}
-
-
-/// <summary>
-/// BarActor Funcions
-/// </summary>
-
 AData3DActorBar::AData3DActorBar()
-	: Super()
 {
 	BarGeneratorComponent = CreateDefaultSubobject<UBarGenerator>(TEXT("barGeneratorComponent"));
 	if (RootComponent)
@@ -165,6 +76,22 @@ AData3DActorBar::AData3DActorBar()
 		BarGeneratorComponent->SplineComponent_height->SetupAttachment(BarGeneratorComponent);
 		BarGeneratorComponent->SplineComponent_length->SetupAttachment(BarGeneratorComponent);
 		BarGeneratorComponent->ChildActorContainComponent->SetupAttachment(BarGeneratorComponent);
+	}
+	TextRenderComponent_chartXaxisName = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Text_xAxis"));
+	TextRenderComponent_chartXaxisName->SetupAttachment(RootComponent);
+	TextRenderComponent_chartYaxisName = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Text_yAxis"));
+	TextRenderComponent_chartYaxisName->SetupAttachment(RootComponent);
+}
+
+// 차트 타이틀 초기화 함수
+void AData3DActorBar::SetChartLabelText()
+{
+	if (DataClassInstance)
+	{
+		UShapeChartClass* TempCastedDataClass = Cast<UShapeChartClass>(DataClassInstance);
+		FString ChartTitle = TempCastedDataClass->GetChartTitle();
+		TextRenderComponent_chartTitle->SetText(FText::FromString(ChartTitle));
+		UE_LOG(LogTemp, Log, TEXT("Data3DActor : Chart Title : %s"), *ChartTitle);
 	}
 }
 
@@ -196,6 +123,8 @@ void AData3DActorBar::GenerateChartRoutine()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Data3DActorBar : DataClassInstance is null, SetDataClassInstance"));
 		SetDataClassInstance();
+		// 차트 타이틀 초기화
+		SetChartLabelText();
 	}
 
 	// 생성할 바 소스 액터 BarGenerator에 전달

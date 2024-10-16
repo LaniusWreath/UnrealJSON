@@ -45,7 +45,7 @@ private:
 
 public:
 	// Getting Data Struct Member for Mapping
-	virtual bool SetChartData(const FString& ChartTypeName, const FString& XName, const TArray<FString>& Labels, const FString& YName, const TArray<float>& Values);
+	virtual bool SetChartData(const FString& ChartTitle, const FString& ChartTypeName, const FString& XName, const TArray<FString>& Labels, const FString& YName, const TArray<float>& Values);
 	UFUNCTION(BlueprintCallable, Category = "Chart")
 	virtual bool SetChartData(const FShapeChartData& InputData);
 
@@ -56,6 +56,12 @@ public:
 	const FShapeChartData& GetShapeChartData() const
 	{
 		return ShapeChartData;
+	}
+
+	// Getter Chart Title String
+	const FString& GetChartTitle() const
+	{
+		return ShapeChartData.ChartTitle;
 	}
 };
 
@@ -73,7 +79,7 @@ private:
 
 public:
 	virtual bool SetChartData(const FShapeChartData& InputData) override;
-	virtual bool SetChartData(const FString& ChartTypeName, const FString& XName, const TArray<FString>& Labels, 
+	virtual bool SetChartData(const FString& ChartTitle, const FString& ChartTypeName, const FString& XName, const TArray<FString>& Labels,
 		const FString& YName, const TArray<float>& Values) override;
 
 	// Getter Enum Chart Type

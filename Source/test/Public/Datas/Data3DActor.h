@@ -10,6 +10,7 @@
 class UDataManager;
 class UDataClasses;
 class UChartGenerator;
+class UTextRenderComponent;
 
 UCLASS(Abstract)
 class TEST_API AData3DActor : public AActor
@@ -32,6 +33,9 @@ public:
 	UFUNCTION()
 	void InitilizeDataManager();
 
+	// Visualization Chart Title
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Chart")
+	UTextRenderComponent* TextRenderComponent_chartTitle;
 
 protected:
 	// Called when the game starts or when spawned
@@ -64,7 +68,8 @@ class AData3DActorBar : public AData3DActor
 	GENERATED_BODY()
 
 private:
-	
+	UFUNCTION()
+	void SetChartLabelText();
 
 protected:
 	virtual void SetDataClassInstance() override;
@@ -80,5 +85,13 @@ public:
 	// Select Bar Blueprint Actor Source to Generate
 	UPROPERTY(EditAnywhere, BlueprintReadOnly ,Category = "Chart")
 	TSubclassOf<ABarBaseActor> BarBaseActorBPClass;
+
+	// Visualization Chart Xaxis Name
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Chart")
+	UTextRenderComponent* TextRenderComponent_chartXaxisName;
+
+	// Visualization Chart Yaxis Name
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Chart")
+	UTextRenderComponent* TextRenderComponent_chartYaxisName;
 
 };

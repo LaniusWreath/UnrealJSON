@@ -21,13 +21,13 @@ AData3DActor::AData3DActor()
 {
 	UE_LOG(LogTemp, Log, TEXT("Data3DActor : Initializing %s"), *GetName());
 
-	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponet"));
+	RootSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponet"));
 
 	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
-	BaseMesh->SetupAttachment(RootComponent);
+	BaseMesh->SetupAttachment(RootSceneComponent);
 
 	TextRenderComponent_chartTitle = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Text_title"));
-	TextRenderComponent_chartTitle->SetupAttachment(RootComponent);
+	TextRenderComponent_chartTitle->SetupAttachment(RootSceneComponent);
 }
 
 // Called when the game starts or when spawned
@@ -68,19 +68,19 @@ void AData3DActor::Tick(float DeltaTime)
 AData3DActorBar::AData3DActorBar()
 {
 	BarGeneratorComponent = CreateDefaultSubobject<UBarGenerator>(TEXT("barGeneratorComponent"));
-	if (RootComponent)
+	if (RootSceneComponent)
 	{
 		// 처음에는 ChartGenerator 생성자에서 각각 컴포넌트 붙였으나, 계층 구조만 변경될 뿐 실제로 붙지 않는 문제 발생.
 		// -> 액터에서 직접 컴포넌트의 구성 컴포넌트들 액터의 RootComponent에 Attach
-		BarGeneratorComponent->SetupAttachment(RootComponent);
+		BarGeneratorComponent->SetupAttachment(RootSceneComponent);
 		BarGeneratorComponent->SplineComponent_height->SetupAttachment(BarGeneratorComponent);
 		BarGeneratorComponent->SplineComponent_length->SetupAttachment(BarGeneratorComponent);
 		BarGeneratorComponent->ChildActorContainComponent->SetupAttachment(BarGeneratorComponent);
 	}
 	TextRenderComponent_chartXaxisName = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Text_xAxis"));
-	TextRenderComponent_chartXaxisName->SetupAttachment(RootComponent);
+	TextRenderComponent_chartXaxisName->SetupAttachment(RootSceneComponent);
 	TextRenderComponent_chartYaxisName = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Text_yAxis"));
-	TextRenderComponent_chartYaxisName->SetupAttachment(RootComponent);
+	TextRenderComponent_chartYaxisName->SetupAttachment(RootSceneComponent);
 }
 
 // 차트 타이틀 초기화 함수

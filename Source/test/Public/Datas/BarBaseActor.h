@@ -23,9 +23,6 @@ private:
 	UPROPERTY()
 	USceneComponent* DefaultSceneRootComponent;
 
-	UPROPERTY()
-	UProceduralMeshComponent* ProcMeshComponent;
-
 	// TimeLine Animation Binding Function
 	UFUNCTION()
 	void OnAnimationUpdate(float Value);
@@ -43,6 +40,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Chart")
 	bool isProceduralMeshUsing;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Chart")
+	UProceduralMeshComponent* ProcMeshComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Chart")
 	USceneComponent* LegacyActorSceneComponent;

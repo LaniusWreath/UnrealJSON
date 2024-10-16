@@ -125,7 +125,7 @@ bool UBarGenerator::CreateBar(const TArray<float>& ValueArray, const TArray<FStr
 			CurrentValue, BarHeightScaler ,ScaledHeight);
 		float Distance = i * BarSpacing;
 
-		FVector BarLocation = SplineComponent_length->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::Local);
+		FVector BarLocation = SplineComponent_length->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World);
 		FString LabelName = LabelArray[i];
 
 		// 자손 액터(차트 액터) 넣을 UChildActorComponent* 반복 생성

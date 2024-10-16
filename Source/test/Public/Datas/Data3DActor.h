@@ -23,6 +23,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Chart")
+	USceneComponent* RootSceneComponent;
+
 	UPROPERTY(BlueprintReadWrite, Category = "Chart")
 	UStaticMeshComponent* BaseMesh;
 

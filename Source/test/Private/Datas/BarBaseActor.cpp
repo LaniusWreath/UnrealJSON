@@ -75,7 +75,7 @@ void ABarBaseActor::CreateProceduralBoxMesh(float BarHeight)
 	ProcMeshComponent->SetWorldScale3D(FVector(1.f, 1.f, zScaler));
 	ProcMeshComponent->AddWorldOffset(FVector(0, 0, (BarHeight / 2)));
 
-	// Procedural Mesh Component에 메쉬 적용
+	// Procedural Mesh Component에 메시 생성
 	ProcMeshComponent->CreateMeshSection_LinearColor(0, Vertices, Triangles, Normals, UV0, {}, Tangents, true);
 
 	if (MeshMaterial)
@@ -84,11 +84,18 @@ void ABarBaseActor::CreateProceduralBoxMesh(float BarHeight)
 	}
 }
 
+// 커스텀 메시를 차트 메시로 할 경우, 높이 매핑하여 메시 수정
 void ABarBaseActor::CreateLegacyMesh(float BarHeight)
 {
-
+	float BarWidth = UnitSize * Width_bar;
+	float zScaler = BarHeight / (UnitSize * BarWidth);
+	UE_LOG(LogTemp, Log, TEXT("ABarBaseActor : Calculate ZScaler : zScaler : %f, BarHeight : %f, UnitSIZE : %d, BarWidth : %f"), zScaler, BarHeight, UnitSize, BarWidth);
+	//UE_LOG(LogTemp, Log, TEXT("BarBaseActor : zScaler is %f"), zScaler);
+	LegacyStaticMeshComponent->SetWorldScale3D(FVector(1.f, 1.f, zScaler));
+	LegacyStaticMeshComponent->AddWorldOffset(FVector(0, 0, (BarHeight / 2)));
 }
 
+// 에디터 상에 Procedural Mesh 또는 커스텀 메시 생성 유무 bool로 추출해놓음 분기하여 메시 생성 함수 결정
 void ABarBaseActor::CreateMesh(float BarHeight)
 {
 	if (isProceduralMeshUsing)

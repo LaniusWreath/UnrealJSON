@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -36,7 +36,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	// Used to send HTTP Reuqest
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category = "Request")
 	void SendHTTPGet();
 
 	// Handle the HttpRequest Response
@@ -46,6 +46,8 @@ protected:
 	void SwitchOnCity();
 
 	void BreakTime();
+
+	TSharedPtr<FJsonObject> ParseRequestBody(TSharedPtr<FJsonObject>& RequestBody);
 
 private:
 
@@ -67,6 +69,7 @@ private:
 	int32 Minute;
 	int32 Second;
 
+	TArray<TSharedPtr<FJsonObject>> ParsedJsonObjectArray;
 
 public:
 	UFUNCTION(BlueprintCallable)

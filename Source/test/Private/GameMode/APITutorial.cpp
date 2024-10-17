@@ -241,3 +241,17 @@ FText AAPITutorial::GetResponseBody()
 {
 	return FText::FromString(ResponseString);
 }
+
+const TSharedPtr<FJsonObject>& AAPITutorial::GetParsedJsonObject(int index)
+{
+	if (ParsedJsonObjectArray.Num() != 0)
+	{
+		UE_LOG(LogTemp, Log, TEXT("APITutorial : current json object length is %d"), ParsedJsonObjectArray.Num());
+		return ParsedJsonObjectArray[index];
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("APITutorial : ParsedJSONObjectArray is empty"));
+		return NullJsonObjectPtr;
+	}
+}

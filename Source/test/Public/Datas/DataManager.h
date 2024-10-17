@@ -29,6 +29,7 @@ struct FDataInstancePair
 		: ClassName(InClassName), DataInstance(InInstance) {}
 };
 
+class AAPITutorial;
 // Manage Datas Class and Control those Member Function
 UCLASS(Blueprintable, BlueprintType)
 class TEST_API UDataManager : public UObject
@@ -36,6 +37,8 @@ class TEST_API UDataManager : public UObject
 	GENERATED_BODY()
 
 private:
+
+	AAPITutorial* GameModeInstance;
 
 	// DataHander Instances
 	UJsonHandler* JSONHandlerInstance;
@@ -64,9 +67,15 @@ private:
 
 public:
 
+	UFUNCTION(BlueprintCallable, Category = "Data Management")
+	void InitializeGameModeInstance();
+
 	// Routine Function for Controlling Json Reading to Processing Functions
 	UFUNCTION(BlueprintCallable, Category = "Data Management")
 	void JsonReadProcessRoutine(const FString& FilePath);
+
+	UFUNCTION(BlueprintCallable, Category = "DataManage")
+	void JsonObjectReadProcessRoutine(int TargetIndex);
 
 	// Getter Data Class Instance only without Header from Data Struct
 	UFUNCTION(BlueprintCallable, Category = "Data Management")

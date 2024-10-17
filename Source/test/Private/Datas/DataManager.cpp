@@ -5,10 +5,35 @@
 #include "Datas/CSVHandler.h"
 #include "Datas/HTTPHandler.h"
 #include "Serialization/JsonWriter.h"
+#include "GameMode/APITutorial.h"
+
+
+void UDataManager::InitializeGameModeInstance()
+{
+	AGameModeBase* gamemode = GetWorld()->GetAuthGameMode();
+	GameModeInstance = Cast<AAPITutorial>(gamemode);
+}
 
 void UDataManager::JsonReadProcessRoutine(const FString& FilePath)
 {
 	TSharedPtr<FJsonObject> Data = LoadDataFromJSON(FilePath);
+	FDataInstancePair NewChartData = InstancingDataClass(Data);
+	ChartDataClassInstanceArray.Add(NewChartData);
+}
+
+// 현재는 인덱스로 데이터 받아오게끔 작성함. 나중에 수정할 것. 
+void UDataManager::JsonObjectReadProcessRoutine(int TargetIndex)
+{
+	TSharedPtr<FJsonObject> Data = GameModeInstance->GetParsedJsonObject(TargetIndex);
+	
+	FString OutputJsonString;
+	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputJsonString);
+	FJsonSerializer::Serialize(Data.ToSharedRef(), Writer);
+
+	// 결과 출력
+	UE_LOG(LogTemp, Log, TEXT("Output JSON: %s"), *OutputJsonString);
+
+
 	FDataInstancePair NewChartData = InstancingDataClass(Data);
 	ChartDataClassInstanceArray.Add(NewChartData);
 }
@@ -45,6 +70,7 @@ void UDataManager::FetchDataFromHTTP(const FString& URL)
 // Return DataClass from ChartDataClassInstanceArray
 UDataClasses* UDataManager::GetChartDataClassInstance(const FString& ClassName)
 {
+	UE_LOG(LogTemp, Log, TEXT("DataManager : %d"), ChartDataClassInstanceArray.Num());
 	for (int32 i = 0; i < ChartDataClassInstanceArray.Num(); i++)
 	{
 		UE_LOG(LogTemp, Log, TEXT("DataManager : Current Data Class Instance name : %s"), *ChartDataClassInstanceArray[i].ClassName)

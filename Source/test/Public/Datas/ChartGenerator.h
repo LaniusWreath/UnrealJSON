@@ -75,10 +75,10 @@ public:
 	UFUNCTION()
 	void SetBarSourceActor(const TSubclassOf<ABarBaseActor>& SourceActor);
 
-	UPROPERTY(BlueprintReadOnly, Category = "Component")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component")
 	USplineComponent* SplineComponent_length;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Component")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component")
 	USplineComponent* SplineComponent_height;
 };
 

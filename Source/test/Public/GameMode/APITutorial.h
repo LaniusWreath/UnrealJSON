@@ -58,6 +58,8 @@ private:
 	ECity City;
 	FString CityURL;
 
+	TSharedPtr<FJsonObject> NullJsonObjectPtr;
+
 	// Request Result Variable
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Time, meta = (AllowPrivateAccess = "true"))
 	FDateTime Time;
@@ -78,4 +80,5 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FText GetResponseBody();
 
+	const TSharedPtr<FJsonObject>& GetParsedJsonObject(int index);
 };

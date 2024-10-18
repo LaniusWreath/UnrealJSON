@@ -26,13 +26,13 @@ void UDataManager::JsonObjectReadProcessRoutine(int TargetIndex)
 {
 	TSharedPtr<FJsonObject> Data = GameModeInstance->GetParsedJsonObject(TargetIndex);
 	
-	FString OutputJsonString;
+	FString OutputJsonString; 
 	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputJsonString);
 	FJsonSerializer::Serialize(Data.ToSharedRef(), Writer);
 
 	// 결과 출력
 	UE_LOG(LogTemp, Log, TEXT("Output JSON: %s"), *OutputJsonString);
-
+	DataString = OutputJsonString;
 
 	FDataInstancePair NewChartData = InstancingDataClass(Data);
 	ChartDataClassInstanceArray.Add(NewChartData);

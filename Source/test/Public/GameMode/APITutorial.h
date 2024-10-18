@@ -67,6 +67,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Response, meta = (AllowPrivateAccess = "true"))
 	FString ResponseString;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Response, meta = (AllowPrivateAccess = "true"))
+	FString ParsedString;
+
 	int32 Hour;
 	int32 Minute;
 	int32 Second;
@@ -79,6 +82,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FText GetResponseBody();
+
+	UFUNCTION(BlueprintCallable)
+	FText GetParsedData();
 
 	const TSharedPtr<FJsonObject>& GetParsedJsonObject(int index);
 };

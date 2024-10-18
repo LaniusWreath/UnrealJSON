@@ -188,14 +188,11 @@ TSharedPtr<FJsonObject> AAPITutorial::ParseRequestBody(TSharedPtr<FJsonObject>& 
 		// 최종 JSON 객체에 "xAxis" 및 "yAxis" 추가
 		OutputJsonObject->SetObjectField(TEXT("xAxis"), XAxisObject);
 		OutputJsonObject->SetObjectField(TEXT("yAxis"), YAxisObject);
-
-		FString OutputJsonString;
-		TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputJsonString);
-		FJsonSerializer::Serialize(OutputJsonObject.ToSharedRef(), Writer);
-
-		// 결과 출력
-		UE_LOG(LogTemp, Log, TEXT("Output JSON: %s"), *OutputJsonString);
 	}
+
+	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&ParsedString);
+	FJsonSerializer::Serialize(OutputJsonObject.ToSharedRef(), Writer);	// JsonObject는 포인터임. 신경써야 
+
 	ParsedJsonObjectArray.Add(OutputJsonObject);
 	return OutputJsonObject;
 }
@@ -240,6 +237,11 @@ FText AAPITutorial::GetCurrentTime()
 FText AAPITutorial::GetResponseBody()
 {
 	return FText::FromString(ResponseString);
+}
+
+FText AAPITutorial::GetParsedData()
+{
+	return FText::FromString(ParsedString);
 }
 
 const TSharedPtr<FJsonObject>& AAPITutorial::GetParsedJsonObject(int index)
